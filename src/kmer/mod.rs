@@ -116,6 +116,10 @@ pub fn rev(mut kmer: u64, k: u8) -> u64 {
     reverse >> (nb_block * 8 - nb_bit)
 }
 
+pub fn get_kmer_space_size(k: u8) -> u64 {
+    1 << (k * 2 - 1)
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -183,5 +187,10 @@ mod test {
 
         // GCCTA -> 110101100
         assert_eq!(hash(b"GCCTA", 5), 0b100011110);
+    }
+
+    #[test]
+    fn kmer_space_size() {
+        assert_eq!(get_kmer_space_size(5), 512);
     }
 }
