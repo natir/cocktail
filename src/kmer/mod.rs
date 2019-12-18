@@ -71,7 +71,7 @@ pub fn cannonical(kmer: u64, k: u8) -> u64 {
 }
 
 #[inline(always)]
-fn parity_even(kmer: u64) -> bool {
+pub fn parity_even(kmer: u64) -> bool {
     kmer.count_ones() % 2 == 0
 }
 
