@@ -192,5 +192,6 @@ mod test {
     #[test]
     fn kmer_space_size() {
         assert_eq!(get_kmer_space_size(5), 512);
+        assert_eq!(get_kmer_space_size(15), 536870912);
     }
 }

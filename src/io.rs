@@ -22,17 +22,24 @@ SOFTWARE.
 
 use bv;
 
-fn get_k(filesize: u64) -> u8 {
-    (((filesize as f64).log2() as u8) / 2) + 2
+fn solidity_filesize2k(filesize: u64) -> u8 {
+    let size = filesize as f64;
+    let log_size = size.log2();
+    let log_size_by_2 = log_size / 2.0;
+    let log_size_by_2_ceil = log_size_by_2.ceil();
+    let final_val = log_size_by_2_ceil as u8 + 2;
+
+    final_val
 }
 
 pub fn read_solidity_bitfield<R>(mut reader: R, filesize: u64) -> (u8, bv::BitVec<u8>)
 where
     R: std::io::BufRead,
 {
-    let k = get_k(filesize);
+    let k = solidity_filesize2k(filesize);
 
     let mut data: Vec<u8> = vec![0u8; (crate::kmer::get_kmer_space_size(k) / 8) as usize];
+
     reader
         .read_exact(&mut data)
         .expect("Error durring reading of data");
@@ -46,8 +53,9 @@ mod test {
 
     #[test]
     fn found_k_value() {
-        assert_eq!(get_k(4), 3);
-        assert_eq!(get_k(64), 5);
+        assert_eq!(solidity_filesize2k(4), 3);
+        assert_eq!(solidity_filesize2k(64), 5);
+	assert_eq!(solidity_filesize2k(33_554_432), 15);
     }
 
     #[test]
