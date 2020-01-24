@@ -27,9 +27,8 @@ fn solidity_filesize2k(filesize: u64) -> u8 {
     let log_size = size.log2();
     let log_size_by_2 = log_size / 2.0;
     let log_size_by_2_ceil = log_size_by_2.ceil();
-    let final_val = log_size_by_2_ceil as u8 + 2;
 
-    final_val
+    log_size_by_2_ceil as u8 + 2
 }
 
 pub fn read_solidity_bitfield<R>(mut reader: R, filesize: u64) -> (u8, bv::BitVec<u8>)
@@ -55,7 +54,7 @@ mod test {
     fn found_k_value() {
         assert_eq!(solidity_filesize2k(4), 3);
         assert_eq!(solidity_filesize2k(64), 5);
-	assert_eq!(solidity_filesize2k(33_554_432), 15);
+        assert_eq!(solidity_filesize2k(33_554_432), 15);
     }
 
     #[test]
