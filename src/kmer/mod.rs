@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
+
 pub fn seq2bit(subseq: &[u8]) -> u64 {
     let mut kmer: u64 = 0;
 
@@ -117,6 +118,10 @@ pub fn rev(mut kmer: u64, k: u8) -> u64 {
 }
 
 pub fn get_kmer_space_size(k: u8) -> u64 {
+    1 << (k * 2)
+}
+
+pub fn get_hash_space_size(k: u8) -> u64 {
     1 << (k * 2 - 1)
 }
 

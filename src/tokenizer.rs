@@ -62,10 +62,6 @@ mod test {
 
     #[test]
     fn basic() {
-        for kmer in Tokenizer::new(b"ACTGACTG", 5) {
-            println!("{:010b}", kmer);
-        }
-
         assert_eq!(
             vec![108, 433, 710, 795],
             Tokenizer::new(b"ACTGACTG", 5).collect::<Vec<u64>>()
