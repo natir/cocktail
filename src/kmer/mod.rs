@@ -95,6 +95,7 @@ pub fn remove_first_bit(kmer: u64) -> u64 {
     kmer >> 1
 }
 
+#[inline(always)]
 pub fn hash(subseq: &[u8], k: u8) -> u64 {
     remove_first_bit(cannonical(seq2bit(subseq), k))
 }

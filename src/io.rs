@@ -37,7 +37,7 @@ where
 {
     let k = solidity_filesize2k(filesize);
 
-    let mut data: Vec<u8> = vec![0u8; (crate::kmer::get_kmer_space_size(k) / 8) as usize];
+    let mut data: Vec<u8> = vec![0u8; (crate::kmer::get_hash_space_size(k) / 8) as usize];
 
     reader
         .read_exact(&mut data)
