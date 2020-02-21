@@ -20,7 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-
 pub fn seq2bit(subseq: &[u8]) -> u64 {
     let mut kmer: u64 = 0;
 
@@ -106,16 +105,30 @@ pub fn rev(mut kmer: u64, k: u8) -> u64 {
     let nb_bit = k * 2;
     let mut reverse: u64 = 0;
 
-    let nb_block = 1 + nb_bit / 8; //odd kmer never fit in 8 block
+    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 56;
+    kmer >>= 8;
 
-    for i in 0..nb_block {
-        reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64)
-            << ((nb_block - i - 1) * 8);
+    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 48;
+    kmer >>= 8;
 
-        kmer >>= 8;
-    }
+    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 40;
+    kmer >>= 8;
 
-    reverse >> (nb_block * 8 - nb_bit)
+    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 32;
+    kmer >>= 8;
+
+    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 24;
+    kmer >>= 8;
+
+    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 16;
+    kmer >>= 8;
+
+    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 8;
+    kmer >>= 8;
+
+    reverse ^= lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64;
+
+    reverse >> (64 - nb_bit)
 }
 
 pub fn get_kmer_space_size(k: u8) -> u64 {
@@ -197,7 +210,7 @@ mod test {
 
     #[test]
     fn kmer_space_size() {
-        assert_eq!(get_kmer_space_size(5), 512);
-        assert_eq!(get_kmer_space_size(15), 536870912);
+        assert_eq!(get_kmer_space_size(5), 1024);
+        assert_eq!(get_kmer_space_size(15), 1073741824);
     }
 }
