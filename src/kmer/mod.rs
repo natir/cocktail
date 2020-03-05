@@ -36,18 +36,17 @@ pub fn nuc2bit(nuc: u8) -> u64 {
     (nuc as u64 >> 1) & 0b11
 }
 
+static mut KMER2SEQ_BUFFER: [u8; 31] = [0; 31];
 pub fn kmer2seq(mut kmer: u64, k: u8) -> String {
-    let mut result = vec![0; k as usize];
-
     for i in (0..k).rev() {
-        let val = kmer & 0b11;
-
-        result[i as usize] = bit2nuc(val);
+        unsafe {
+            KMER2SEQ_BUFFER[i as usize] = bit2nuc(kmer & 0b11);
+        }
 
         kmer >>= 2;
     }
 
-    String::from_utf8(result).unwrap()
+    unsafe { String::from_utf8_unchecked((&KMER2SEQ_BUFFER[..k as usize]).to_vec()) }
 }
 
 #[inline(always)]
@@ -100,8 +99,41 @@ pub fn hash(subseq: &[u8], k: u8) -> u64 {
 }
 
 mod lookup_table;
+type Rev = fn(u64, u8) -> u64;
 
-pub fn rev(mut kmer: u64, k: u8) -> u64 {
+pub static mut REV: Rev = first_rev;
+
+pub fn rev(kmer: u64, k: u8) -> u64 {
+    unsafe { REV(kmer, k) }
+}
+
+pub fn first_rev(kmer: u64, k: u8) -> u64 {
+    if k < 15 {
+        unsafe { REV = loop_rev };
+    } else {
+        unsafe { REV = unrool_rev };
+    }
+
+    rev(kmer, k)
+}
+
+pub fn loop_rev(mut kmer: u64, k: u8) -> u64 {
+    let nb_bit = k * 2;
+    let mut reverse: u64 = 0;
+
+    let nb_block = 1 + nb_bit / 8; //odd kmer never fit in 8 block
+
+    for i in 0..nb_block {
+        reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64)
+            << ((nb_block - i - 1) * 8);
+
+        kmer >>= 8;
+    }
+
+    reverse >> (nb_block * 8 - nb_bit)
+}
+
+pub fn unrool_rev(mut kmer: u64, k: u8) -> u64 {
     let nb_bit = k * 2;
     let mut reverse: u64 = 0;
 
@@ -159,6 +191,8 @@ mod test {
 
         // 110101100 -> GCCTA
         assert_eq!(kmer2seq(0b1101011000, 5), "GCCTA");
+
+        assert_eq!(kmer2seq(0b1101011000, 31), "AAAAAAAAAAAAAAAAAAAAAAAAAAGCCTA");
     }
 
     #[test]
