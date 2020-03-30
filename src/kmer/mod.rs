@@ -192,7 +192,10 @@ mod test {
         // 110101100 -> GCCTA
         assert_eq!(kmer2seq(0b1101011000, 5), "GCCTA");
 
-        assert_eq!(kmer2seq(0b1101011000, 31), "AAAAAAAAAAAAAAAAAAAAAAAAAAGCCTA");
+        assert_eq!(
+            kmer2seq(0b1101011000, 31),
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAGCCTA"
+        );
     }
 
     #[test]
