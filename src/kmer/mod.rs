@@ -78,12 +78,15 @@ pub fn parity_even(kmer: u64) -> bool {
 }
 
 pub fn revcomp(kmer: u64, k: u8) -> u64 {
-    rev(comp(kmer), k)
+    rev(speed_comp(kmer), k)
 }
 
-#[inline(always)]
-pub fn comp(kmer: u64) -> u64 {
+fn speed_comp(kmer: u64) -> u64 {
     kmer ^ 0b1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010
+}
+#[inline(always)]
+pub fn comp(kmer: u64, k: u8) -> u64 {
+    speed_comp(kmer) & ((1 << (2 * k)) - 1)
 }
 
 #[inline(always)]
@@ -217,10 +220,7 @@ mod test {
     #[test]
     fn comp_() {
         // TAGGC -> 1000111101 comp 0001001011
-        assert_eq!(
-            comp(0b1000111101),
-            0b1010101010101010101010101010101010101010101010101010100010010111
-        );
+        assert_eq!(comp(0b1000111101, 5), 0b0010010111);
     }
 
     #[test]
