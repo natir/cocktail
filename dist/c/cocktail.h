@@ -14,7 +14,7 @@ uint8_t cocktail_bit2nuc(uint64_t bit);
 
 uint64_t cocktail_cannonical(uint64_t kmer, uint8_t k);
 
-uint64_t cocktail_comp(uint64_t kmer);
+uint64_t cocktail_comp(uint64_t kmer, uint8_t k);
 
 bool cocktail_get_first_bit(uint64_t kmer);
 
@@ -22,9 +22,9 @@ uint64_t cocktail_get_hash_space_size(uint8_t k);
 
 uint64_t cocktail_get_kmer_space_size(uint8_t k);
 
-uint64_t cocktail_hash(char *c_subseq, uint8_t k);
+uint64_t cocktail_hash(const char *c_subseq, uint8_t k);
 
-char *cocktail_kmer2seq(uint64_t kmer, uint8_t k);
+const char *cocktail_kmer2seq(uint64_t kmer, uint8_t k);
 
 uint64_t cocktail_nuc2bit(uint8_t nuc);
 
@@ -36,6 +36,6 @@ uint64_t cocktail_rev(uint64_t kmer, uint8_t k);
 
 uint64_t cocktail_revcomp(uint64_t kmer, uint8_t k);
 
-uint64_t cocktail_seq2bit(char *c_subseq, uintptr_t len);
+uint64_t cocktail_seq2bit(const char *c_subseq, uintptr_t len);
 
 #endif /* _COCKTAIL_HEADER_GUARD_ */

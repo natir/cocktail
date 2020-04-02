@@ -23,77 +23,77 @@ SOFTWARE.
 use crate::kmer;
 
 #[no_mangle]
-pub extern fn cocktail_seq2bit(c_subseq: *mut std::os::raw::c_char, len: usize) -> u64 {
+pub extern "C" fn cocktail_seq2bit(c_subseq: *const std::os::raw::c_char, len: usize) -> u64 {
     let subseq = unsafe { std::slice::from_raw_parts(c_subseq as *const u8, len) };
 
     kmer::seq2bit(subseq)
 }
 
 #[no_mangle]
-pub extern fn cocktail_nuc2bit(nuc: u8) -> u64 {
+pub extern "C" fn cocktail_nuc2bit(nuc: u8) -> u64 {
     kmer::nuc2bit(nuc)
 }
 
 #[no_mangle]
-pub extern fn cocktail_kmer2seq(kmer: u64, k: u8) -> *mut std::os::raw::c_char {
+pub extern "C" fn cocktail_kmer2seq(kmer: u64, k: u8) -> *const std::os::raw::c_char {
     let c_string = kmer::kmer2seq(kmer, k);
 
     unsafe { std::ffi::CString::from_vec_unchecked(c_string.into_bytes()).into_raw() }
 }
 
 #[no_mangle]
-pub extern fn cocktail_bit2nuc(bit: u64) -> u8 {
+pub extern "C" fn cocktail_bit2nuc(bit: u64) -> u8 {
     kmer::bit2nuc(bit)
 }
 
 #[no_mangle]
-pub extern fn cocktail_cannonical(kmer: u64, k: u8) -> u64 {
+pub extern "C" fn cocktail_cannonical(kmer: u64, k: u8) -> u64 {
     kmer::cannonical(kmer, k)
 }
 
 #[no_mangle]
-pub extern fn cocktail_parity_even(kmer: u64) -> bool {
+pub extern "C" fn cocktail_parity_even(kmer: u64) -> bool {
     kmer::parity_even(kmer)
 }
 
 #[no_mangle]
-pub extern fn cocktail_revcomp(kmer: u64, k: u8) -> u64 {
+pub extern "C" fn cocktail_revcomp(kmer: u64, k: u8) -> u64 {
     kmer::revcomp(kmer, k)
 }
 
 #[no_mangle]
-pub extern fn cocktail_comp(kmer: u64) -> u64 {
-    kmer::comp(kmer)
+pub extern "C" fn cocktail_comp(kmer: u64, k: u8) -> u64 {
+    kmer::comp(kmer, k)
 }
 
 #[no_mangle]
-pub extern fn cocktail_get_first_bit(kmer: u64) -> bool {
+pub extern "C" fn cocktail_get_first_bit(kmer: u64) -> bool {
     kmer::get_first_bit(kmer)
 }
 
 #[no_mangle]
-pub extern fn cocktail_remove_first_bit(kmer: u64) -> u64 {
+pub extern "C" fn cocktail_remove_first_bit(kmer: u64) -> u64 {
     kmer::remove_first_bit(kmer)
 }
 
 #[no_mangle]
-pub extern fn cocktail_hash(c_subseq: *mut std::os::raw::c_char, k: u8) -> u64 {
+pub extern "C" fn cocktail_hash(c_subseq: *const std::os::raw::c_char, k: u8) -> u64 {
     let subseq = unsafe { std::slice::from_raw_parts(c_subseq as *const u8, k as usize) };
 
     kmer::hash(subseq, k)
 }
 
 #[no_mangle]
-pub extern fn cocktail_rev(kmer: u64, k: u8) -> u64 {
+pub extern "C" fn cocktail_rev(kmer: u64, k: u8) -> u64 {
     kmer::rev(kmer, k)
 }
 
 #[no_mangle]
-pub extern fn cocktail_get_kmer_space_size(k: u8) -> u64 {
+pub extern "C" fn cocktail_get_kmer_space_size(k: u8) -> u64 {
     kmer::get_kmer_space_size(k)
 }
 
 #[no_mangle]
-pub extern fn cocktail_get_hash_space_size(k: u8) -> u64 {
+pub extern "C" fn cocktail_get_hash_space_size(k: u8) -> u64 {
     kmer::get_hash_space_size(k)
 }
