@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-pub mod io;
 pub mod kmer;
 pub mod tokenizer;
+
+pub mod c_binding;

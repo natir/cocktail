@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
+#[inline(always)]
 pub fn seq2bit(subseq: &[u8]) -> u64 {
     let mut kmer: u64 = 0;
 
@@ -37,6 +38,8 @@ pub fn nuc2bit(nuc: u8) -> u64 {
 }
 
 static mut KMER2SEQ_BUFFER: [u8; 31] = [0; 31];
+
+#[inline(always)]
 pub fn kmer2seq(mut kmer: u64, k: u8) -> String {
     for i in (0..k).rev() {
         unsafe {
@@ -98,25 +101,14 @@ pub fn hash(subseq: &[u8], k: u8) -> u64 {
     remove_first_bit(cannonical(seq2bit(subseq), k))
 }
 
-mod lookup_table;
-type Rev = fn(u64, u8) -> u64;
-
-pub static mut REV: Rev = first_rev;
-
+#[inline(always)]
 pub fn rev(kmer: u64, k: u8) -> u64 {
-    unsafe { REV(kmer, k) }
+    loop_rev(kmer, k)
 }
 
-pub fn first_rev(kmer: u64, k: u8) -> u64 {
-    if k < 15 {
-        unsafe { REV = loop_rev };
-    } else {
-        unsafe { REV = unrool_rev };
-    }
+mod lookup_table;
 
-    rev(kmer, k)
-}
-
+#[inline(always)]
 pub fn loop_rev(mut kmer: u64, k: u8) -> u64 {
     let nb_bit = k * 2;
     let mut reverse: u64 = 0;
@@ -133,6 +125,7 @@ pub fn loop_rev(mut kmer: u64, k: u8) -> u64 {
     reverse >> (nb_block * 8 - nb_bit)
 }
 
+#[inline(always)]
 pub fn unrool_rev(mut kmer: u64, k: u8) -> u64 {
     let nb_bit = k * 2;
     let mut reverse: u64 = 0;
@@ -163,10 +156,12 @@ pub fn unrool_rev(mut kmer: u64, k: u8) -> u64 {
     reverse >> (64 - nb_bit)
 }
 
+#[inline(always)]
 pub fn get_kmer_space_size(k: u8) -> u64 {
     1 << (k * 2)
 }
 
+#[inline(always)]
 pub fn get_hash_space_size(k: u8) -> u64 {
     1 << (k * 2 - 1)
 }
