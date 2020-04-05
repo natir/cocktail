@@ -20,12 +20,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
+//! This module provides iterator to produce kmer from DNA sequence
+
 /* standard use */
 use std::ops::BitXor;
 
 /* local use */
 use crate::kmer;
 
+/// An iterator that takes a DNA sequence and produces kmers, in the forward direction and 2bit form.
+///
+/// # Example
+///
+/// ```
+/// use cocktail::tokenizer::Tokenizer;
+///
+/// let tokenizer = Tokenizer::new(b"GTACTGTGCCCGTGTTACTTAGTAAGCGTGAAAGGTGCGTGTTTCCGAGA", 5);
+///
+/// for kmer in tokenizer {
+///     // ... do what you want ...
+/// }
 pub struct Tokenizer<'a> {
     kmer_mask: u64,
     seq: &'a [u8],
@@ -34,6 +48,8 @@ pub struct Tokenizer<'a> {
 }
 
 impl<'a> Tokenizer<'a> {
+    
+    /// Create a new Tokenizer on seq DNA kmer size is equal to k
     pub fn new(seq: &'a [u8], k: u8) -> Self {
         Tokenizer {
             kmer_mask: (1 << (k * 2)) - 1,
@@ -60,6 +76,19 @@ impl<'a> Iterator for Tokenizer<'a> {
     }
 }
 
+
+/// An iterator that takes a DNA sequence and produces kmers (in the forward direction and 2bit form) and the associated minimizer.
+///
+/// # Example
+///
+/// ```
+/// use cocktail::tokenizer::TokenizerMini;
+///
+/// let tokenizer = TokenizerMini::new(b"GTACTGTGCCCGTGTTACTTAGTAAGCGTGAAAGGTGCGTGTTTCCGAGA", 5, 3);
+///
+/// for (kmer, minimizer) in tokenizer {
+///     // ... do what you want ...
+/// }
 pub struct TokenizerMini<'a> {
     kmer_mask: u64,
     seq: &'a [u8],
@@ -69,6 +98,7 @@ pub struct TokenizerMini<'a> {
 }
 
 impl<'a> TokenizerMini<'a> {
+    /// Create a new TokenizerMini on seq DNA kmer size is equal to k
     pub fn new(seq: &'a [u8], k: u8, m: u8) -> Self {
         let kmer = kmer::seq2bit(&seq[0..((k - 1) as usize)]);
 
@@ -100,6 +130,11 @@ impl<'a> Iterator for TokenizerMini<'a> {
     }
 }
 
+/// A struct to get minimizer of sucessive kmer
+///
+/// At initialization all subkmer with weight is compute and store in a ring buffer.
+/// When the next kmer is add only the new subkmer and is weight is compute.
+/// If the new subkmer erase the previous minimizer but is score isn't lower than previous minimizer, the ring buffer is scanned completely to find the new minimizer. 
 pub struct MinimizerRing {
     ring_buffer: Box<[(u64, u64)]>,
     current: usize,
@@ -110,6 +145,7 @@ pub struct MinimizerRing {
 }
 
 impl MinimizerRing {
+    /// Create a MinimizerRing, with kmer size equale to `k`, subkmer size equale to `m` and init ring buffer with `kmer`
     pub fn new(k: u8, m: u8, kmer: u64) -> Self {
         let mut obj = Self {
             ring_buffer: vec![(0, 0); (k - m + 1) as usize].into_boxed_slice(),
@@ -125,7 +161,8 @@ impl MinimizerRing {
         obj
     }
 
-    pub fn populate_buffer(&mut self, mut kmer: u64) {
+    /// Reset the ring buffer with a new kmer
+    pub fn populate_buffer(&mut  self, mut kmer: u64) {
         let mut score = u64::max_value();
         let max_len = (self.k - self.m + 1) as usize;
 
@@ -148,6 +185,7 @@ impl MinimizerRing {
         self.current = 0;
     }
 
+    /// Add the next kmer 
     pub fn add_kmer(&mut self, kmer: u64) {
         let minimizer = kmer::cannonical(kmer & self.mask, self.m);
         let score = MinimizerRing::get_score(minimizer);
@@ -164,6 +202,7 @@ impl MinimizerRing {
         self.current = (self.current + 1) % self.ring_buffer.len();
     }
 
+    /// Get a pair of value first one is the minimizer second one is his score
     pub fn get_mini(&self) -> (u64, u64) {
         self.ring_buffer[self.minimizer]
     }

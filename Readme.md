@@ -1,8 +1,10 @@
 # Cocktail
 
+[![Build Status](https://travis-ci.org/natir/cocktail.svg?branch=master)](https://travis-ci.org/natir/cocktail) [Documentation](https://natir.github.io/cocktail/cocktail)
+
 Cocktail it's a rust crate, python module, c library, to convert DNA in kmer 2 bit representation and get is cannonical version.
 
-**Warning this isn't stable API can change any time**
+**Warning this isn't stable, API can change any time**
 
 # Usage
 
@@ -17,7 +19,7 @@ cocktail = { git="https://github.com/natir/cocktail.git" }
 
 You need [rust toolchain setup on your system](https://rustup.rs/)
 
-In `requirements.txt` add this:
+Give this to pip:
 ```
 git+https://github.com/natir/cocktail.git#egg=cocktail&subdirectory=dist/python
 ```

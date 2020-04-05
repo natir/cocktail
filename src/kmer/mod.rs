@@ -20,6 +20,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
+//! A set of function to convert small sequence (less than 32 nucleotide) in 2 bit representation.
+//! - A or a -> 00
+//! - C or c -> 01
+//! - T or t -> 10
+//! - G or g -> 11
+//!
+//! We use the second and thrid bit of each value provide, if you provide no ACTG value this function silently convert to A, C, T or G, for exemple N or n is convert in G.
+//!
+//! With this coding and if kmer size is odd, if the popcount of forward is odd the popcount of reverse is even. In this library if a kmer have even popcount is the cannonical kmer.
+//!
+//! If we work only with cannonical kmer, we can remove one bit at any extremity. To reconstruct lost bit, if result have even popcount we add a 0, if it's ood we add 1.  
+
+/// Convert a sequence in 2 bit representation:
 #[inline(always)]
 pub fn seq2bit(subseq: &[u8]) -> u64 {
     let mut kmer: u64 = 0;
@@ -32,6 +45,7 @@ pub fn seq2bit(subseq: &[u8]) -> u64 {
     kmer
 }
 
+/// Convert a nucleotide in 2bit representation, by use conversion present in [seq2bit](seq2bit)
 #[inline(always)]
 pub fn nuc2bit(nuc: u8) -> u64 {
     (nuc as u64 >> 1) & 0b11
@@ -39,6 +53,7 @@ pub fn nuc2bit(nuc: u8) -> u64 {
 
 static mut KMER2SEQ_BUFFER: [u8; 31] = [0; 31];
 
+/// Convert a 2 bit repersentation in String, **warning** this function isn't thread safe.
 #[inline(always)]
 pub fn kmer2seq(mut kmer: u64, k: u8) -> String {
     for i in (0..k).rev() {
@@ -52,6 +67,7 @@ pub fn kmer2seq(mut kmer: u64, k: u8) -> String {
     unsafe { String::from_utf8_unchecked((&KMER2SEQ_BUFFER[..k as usize]).to_vec()) }
 }
 
+/// Convert the 2bit representation of a nucleotide in nucleotide
 #[inline(always)]
 pub fn bit2nuc(bit: u64) -> u8 {
     match bit {
@@ -63,6 +79,7 @@ pub fn bit2nuc(bit: u64) -> u8 {
     }
 }
 
+/// Take a kmer and return the cannonical form
 #[inline(always)]
 pub fn cannonical(kmer: u64, k: u8) -> u64 {
     if parity_even(kmer) {
@@ -72,38 +89,48 @@ pub fn cannonical(kmer: u64, k: u8) -> u64 {
     }
 }
 
+/// Return true if the kmer parity is even
 #[inline(always)]
 pub fn parity_even(kmer: u64) -> bool {
     kmer.count_ones() % 2 == 0
 }
 
+/// Return the reverse complement of kmer
+#[inline(always)]
 pub fn revcomp(kmer: u64, k: u8) -> u64 {
     rev(speed_comp(kmer), k)
 }
 
+#[inline(always)]
 fn speed_comp(kmer: u64) -> u64 {
     kmer ^ 0b1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010_1010
 }
+
+/// Return the complement of kmer
 #[inline(always)]
 pub fn comp(kmer: u64, k: u8) -> u64 {
     speed_comp(kmer) & ((1 << (2 * k)) - 1)
 }
 
+/// Return true if the right bit of kmer is 1
 #[inline(always)]
 pub fn get_first_bit(kmer: u64) -> bool {
     kmer & 1 != 0
 }
 
+/// Return the kmer without the rightest bit of kmer
 #[inline(always)]
 pub fn remove_first_bit(kmer: u64) -> u64 {
     kmer >> 1
 }
 
+/// Take a subseq and return the cannonical kmer with out the rightest bit
 #[inline(always)]
 pub fn hash(subseq: &[u8], k: u8) -> u64 {
     remove_first_bit(cannonical(seq2bit(subseq), k))
 }
 
+/// Return the reverse of kmer
 #[inline(always)]
 pub fn rev(kmer: u64, k: u8) -> u64 {
     loop_rev(kmer, k)
@@ -139,7 +166,7 @@ pub fn unrool_rev(mut kmer: u64, k: u8) -> u64 {
     reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 48;
     kmer >>= 8;
 
-    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 40;
+     reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 40;
     kmer >>= 8;
 
     reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 32;
@@ -159,11 +186,13 @@ pub fn unrool_rev(mut kmer: u64, k: u8) -> u64 {
     reverse >> (64 - nb_bit)
 }
 
+/// Return the cardinality of cannonical kmer set for a given kmer size
 #[inline(always)]
 pub fn get_kmer_space_size(k: u8) -> u64 {
     1 << (k * 2)
 }
 
+/// Return the cardinality of cannonical hash set for a given kmer size
 #[inline(always)]
 pub fn get_hash_space_size(k: u8) -> u64 {
     1 << (k * 2 - 1)

@@ -23,4 +23,4 @@ SOFTWARE.
 pub mod kmer;
 pub mod tokenizer;
 
-pub mod c_binding;
+pub mod binding;
