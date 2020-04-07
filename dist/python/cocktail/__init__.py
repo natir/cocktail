@@ -2,6 +2,8 @@
 
 from ._lowlevel import ffi, lib
 
+from .minimizer_ring import MinimizerRing
+
 def seq2bit(subseq: str):
     return lib.cocktail_seq2bit(subseq.encode("utf-8"), len(subseq))
 

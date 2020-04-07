@@ -10,32 +10,112 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+/**
+ * A struct to get minimizer of sucessive kmer
+ *
+ * At initialization all subkmer with weight is compute and store in a ring buffer.
+ * When the next kmer is add only the new subkmer and is weight is compute.
+ * If the new subkmer erase the previous minimizer but is score isn't lower than previous minimizer, the ring buffer is scanned completely to find the new minimizer.
+ */
+typedef struct MinimizerRing MinimizerRing;
+
+/**
+ * Binding for [kmer::bit2nuc] in Python the name is bit2nuc
+ */
 uint8_t cocktail_bit2nuc(uint64_t bit);
 
+/**
+ * Binding for [kmer::cannonical] in Python the name is cannonical
+ */
 uint64_t cocktail_cannonical(uint64_t kmer, uint8_t k);
 
+/**
+ * Binding for [kmer::comp] in Python the name is comp
+ */
 uint64_t cocktail_comp(uint64_t kmer, uint8_t k);
 
+/**
+ * Binding for [kmer::get_first_bit] in Python the name is get_first_bit
+ */
 bool cocktail_get_first_bit(uint64_t kmer);
 
+/**
+ * Binding for [kmer::get_hash_space_size] in Python the name is get_hash_space_size
+ */
 uint64_t cocktail_get_hash_space_size(uint8_t k);
 
+/**
+ * Binding for [kmer::get_kmer_space_size] in Python the name is get_kmer_space_size
+ */
 uint64_t cocktail_get_kmer_space_size(uint8_t k);
 
+/**
+ * Binding for [kmer::hash] in Python the name is hash
+ */
 uint64_t cocktail_hash(const char *c_subseq, uint8_t k);
 
+/**
+ * Binding for [kmer::kmer2seq] in Python the name is kmer2seq
+ */
 const char *cocktail_kmer2seq(uint64_t kmer, uint8_t k);
 
+/**
+ * Add the next kmer. See [MinimizerRing::add_kmer()]. In python it's add_kmer methode of MinimizerRing
+ */
+void cocktail_minimizerring_add_kmer(MinimizerRing *miniring,
+                                     uint64_t kmer);
+
+/**
+ * Free a cocktail minimizer ring
+ */
+void cocktail_minimizerring_free(MinimizerRing *miniring);
+
+/**
+ * Get the actual minimizer. See [MinimizerRing::get_mini()]. In python it's get_mini methode of MinimizerRing
+ */
+uint64_t cocktail_minimizerring_get_mini(MinimizerRing *miniring);
+
+/**
+ * Create a cocktail MinimizerRing. See [MinimizerRing::new()]. In python MinimizerRing is  an object, this function is call in default constructor.
+ */
+MinimizerRing *cocktail_minimizerring_new(uint8_t k,
+                                          uint8_t m,
+                                          uint64_t kmer);
+
+/**
+ * Reset the ring buffer. See [MinimizerRing::populate_buffer()]. In python it's populate_buffer methode of MinimizerRing
+ */
+void cocktail_minimizerring_populate_buffer(MinimizerRing *miniring,
+                                            uint64_t kmer);
+
+/**
+ * Binding for [kmer::nuc2bit] in Python the name is nuc2bit
+ */
 uint64_t cocktail_nuc2bit(uint8_t nuc);
 
+/**
+ * Binding for [kmer::parity_even] in Python the name is parity_even
+ */
 bool cocktail_parity_even(uint64_t kmer);
 
+/**
+ * Binding for [kmer::remove_first_bit] in Python the name is remove_first_bit
+ */
 uint64_t cocktail_remove_first_bit(uint64_t kmer);
 
+/**
+ * Binding for [kmer::rev] in Python the name is rev
+ */
 uint64_t cocktail_rev(uint64_t kmer, uint8_t k);
 
+/**
+ * Binding for [kmer::revcomp] in Python the name is revcomp
+ */
 uint64_t cocktail_revcomp(uint64_t kmer, uint8_t k);
 
+/**
+ * Binding for [kmer::seq2bit] in Python the name is seq2bit and the parameter len isn't present
+ */
 uint64_t cocktail_seq2bit(const char *c_subseq, uintptr_t len);
 
 #endif /* _COCKTAIL_HEADER_GUARD_ */

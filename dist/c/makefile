@@ -1,2 +1,2 @@
-all: test.c ../../target/release/libcocktail.a
-	gcc -Wall test.c ../../target/release/libcocktail.a -lpthread -lm -ldl -o test
+all: test.c ../../target/debug/libcocktail.a
+	gcc -Wall test.c ../../target/debug/libcocktail.a -lpthread -lm -ldl -o test

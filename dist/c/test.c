@@ -51,5 +51,26 @@ int main(void) {
   printf("kmer ACTGT hash %lu\n\n", cocktail_hash("ACTGC", 5));
 
   printf("kmer space %lu\n", cocktail_get_kmer_space_size(5));
-  printf("hash space %lu\n", cocktail_get_hash_space_size(5));
+  printf("hash space %lu\n\n", cocktail_get_hash_space_size(5));
+
+  MinimizerRing* miniring = cocktail_minimizerring_new(5, 3, cocktail_seq2bit("ACTGT", 5));
+
+  printf("minimizer of ACTGT is %lu\n", cocktail_minimizerring_get_mini(miniring));
+  
+  cocktail_minimizerring_add_kmer(miniring, cocktail_seq2bit("CTGTA", 5));
+  printf("minimizer of CTGTA is %lu\n", cocktail_minimizerring_get_mini(miniring));
+
+  cocktail_minimizerring_add_kmer(miniring, cocktail_seq2bit("TGTAG", 5));
+  printf("minimizer of TGTAG is %lu\n", cocktail_minimizerring_get_mini(miniring));
+
+  cocktail_minimizerring_add_kmer(miniring, cocktail_seq2bit("GTAGA", 5));
+  printf("minimizer of GTAGA is %lu\n", cocktail_minimizerring_get_mini(miniring));
+
+  cocktail_minimizerring_add_kmer(miniring, cocktail_seq2bit("TAGAA", 5));
+  printf("minimizer of TAGAA is %lu\n", cocktail_minimizerring_get_mini(miniring));
+   
+  cocktail_minimizerring_add_kmer(miniring, cocktail_seq2bit("AGAAA", 5));
+  printf("minimizer of AGAAA is %lu\n", cocktail_minimizerring_get_mini(miniring));
+  
+  cocktail_minimizerring_free(miniring);
 }

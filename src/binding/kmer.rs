@@ -20,8 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-//! This module contain function for binding a C and Python binding is avaible
-
 use crate::kmer;
 
 /// Binding for [kmer::seq2bit] in Python the name is seq2bit and the parameter len isn't present
