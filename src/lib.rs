@@ -21,6 +21,7 @@ SOFTWARE.
  */
 
 pub mod kmer;
+pub mod rle;
 pub mod tokenizer;
 
 pub mod binding;

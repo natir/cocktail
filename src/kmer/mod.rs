@@ -30,9 +30,9 @@ SOFTWARE.
 //!
 //! With this coding and if kmer size is odd, if the popcount of forward is odd the popcount of reverse is even. In this library if a kmer have even popcount is the cannonical kmer.
 //!
-//! If we work only with cannonical kmer, we can remove one bit at any extremity. To reconstruct lost bit, if result have even popcount we add a 0, if it's ood we add 1.  
+//! If we work only with cannonical kmer, we can remove one bit at any extremity. To reconstruct lost bit, if result have even popcount we add a 0, if it's ood we add 1.
 
-/// Convert a sequence in 2 bit representation:
+/// Convert a sequence in 2 bit representation if suseq is larger than 32 only the last 32 nuc is store
 #[inline(always)]
 pub fn seq2bit(subseq: &[u8]) -> u64 {
     let mut kmer: u64 = 0;
@@ -166,7 +166,7 @@ pub fn unrool_rev(mut kmer: u64, k: u8) -> u64 {
     reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 48;
     kmer >>= 8;
 
-     reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 40;
+    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 40;
     kmer >>= 8;
 
     reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 32;
