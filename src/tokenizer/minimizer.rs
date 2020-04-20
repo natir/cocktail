@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019 Pierre Marijon <pmarijon@mpi-inf.mpg.de>
+Copyright (c) 2020 Pierre Marijon <pmarijon@mpi-inf.mpg.de>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,62 +20,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-//! This module provides iterator to produce kmer from DNA sequence
-
 /* standard use */
 use std::ops::BitXor;
 
 /* local use */
 use crate::kmer;
-
-/// An iterator that takes a DNA sequence and produces kmers, in the forward direction and 2bit form.
-///
-/// # Example
-///
-/// ```
-/// use cocktail::tokenizer::Tokenizer;
-///
-/// let tokenizer = Tokenizer::new(b"GTACTGTGCCCGTGTTACTTAGTAAGCGTGAAAGGTGCGTGTTTCCGAGA", 5);
-///
-/// for kmer in tokenizer {
-///     // ... do what you want ...
-/// }
-pub struct Tokenizer<'a> {
-    kmer_mask: u64,
-    seq: &'a [u8],
-    pos: usize,
-    kmer: u64,
-}
-
-impl<'a> Tokenizer<'a> {
-    
-    /// Create a new Tokenizer on seq DNA kmer size is equal to k
-    pub fn new(seq: &'a [u8], k: u8) -> Self {
-        Tokenizer {
-            kmer_mask: (1 << (k * 2)) - 1,
-            seq,
-            pos: (k - 1) as usize,
-            kmer: kmer::seq2bit(&seq[0..((k - 1) as usize)]),
-        }
-    }
-}
-
-impl<'a> Iterator for Tokenizer<'a> {
-    type Item = u64;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.pos == self.seq.len() {
-            None
-        } else {
-            self.kmer = ((self.kmer << 2) & self.kmer_mask) | kmer::nuc2bit(self.seq[self.pos]);
-
-            self.pos += 1;
-
-            Some(self.kmer)
-        }
-    }
-}
-
 
 /// An iterator that takes a DNA sequence and produces kmers (in the forward direction and 2bit form) and the associated minimizer.
 ///
@@ -134,7 +83,7 @@ impl<'a> Iterator for TokenizerMini<'a> {
 ///
 /// At initialization all subkmer with weight is compute and store in a ring buffer.
 /// When the next kmer is add only the new subkmer and is weight is compute.
-/// If the new subkmer erase the previous minimizer but is score isn't lower than previous minimizer, the ring buffer is scanned completely to find the new minimizer. 
+/// If the new subkmer erase the previous minimizer but is score isn't lower than previous minimizer, the ring buffer is scanned completely to find the new minimizer.
 pub struct MinimizerRing {
     ring_buffer: Box<[(u64, u64)]>,
     current: usize,
@@ -162,7 +111,7 @@ impl MinimizerRing {
     }
 
     /// Reset the ring buffer with a new kmer
-    pub fn populate_buffer(&mut  self, mut kmer: u64) {
+    pub fn populate_buffer(&mut self, mut kmer: u64) {
         let mut score = u64::max_value();
         let max_len = (self.k - self.m + 1) as usize;
 
@@ -185,7 +134,7 @@ impl MinimizerRing {
         self.current = 0;
     }
 
-    /// Add the next kmer 
+    /// Add the next kmer
     pub fn add_kmer(&mut self, kmer: u64) {
         let minimizer = kmer::cannonical(kmer & self.mask, self.m);
         let score = MinimizerRing::get_score(minimizer);
@@ -230,116 +179,86 @@ impl MinimizerRing {
 
 #[cfg(test)]
 mod test {
-    mod tokenizer {
-        #[test]
-        fn basic() {
-            assert_eq!(
-                vec![108, 433, 710, 795],
-                crate::tokenizer::Tokenizer::new(b"ACTGACTG", 5).collect::<Vec<u64>>()
-            );
+    use super::*;
+
+    #[test]
+    fn basic() {
+        let seq = b"acgtgcgtgagaattgttcggtggaacaggcg";
+
+        let mut token = TokenizerMini::new(seq, 11, 7);
+
+        let mut kmers = Vec::new();
+        let mut canos = Vec::new();
+        let mut minis = Vec::new();
+
+        while let Some((kmer, mini)) = token.next() {
+            let cano = crate::kmer::cannonical(kmer, 11);
+
+            kmers.push(kmer);
+            canos.push(cano);
+            minis.push(mini);
         }
 
-        #[test]
-        fn hash() {
-            assert_eq!(
-                vec![54, 457, 114, 397],
-                crate::tokenizer::Tokenizer::new(b"ACTGACTG", 5)
-                    .map(|x| crate::kmer::remove_first_bit(crate::kmer::cannonical(x, 5)))
-                    .collect::<Vec<u64>>()
-            );
-        }
+        assert_eq!(
+            kmers,
+            [
+                505779, 2023116, 3898160, 3009730, 3650314, 2018347, 3879086, 2933434, 3345129,
+                797607, 3190431, 178814, 715259, 2861039, 3055548, 3833584, 2751425, 2617092,
+                2079763, 4124751, 3916093, 3081463
+            ]
+        );
 
-        #[test]
-        fn cannonical() {
-            assert_eq!(
-                vec![108, 915, 228, 795],
-                crate::tokenizer::Tokenizer::new(b"ACTGACTG", 5)
-                    .map(|x| crate::kmer::cannonical(x, 5))
-                    .collect::<Vec<u64>>()
-            );
-        }
+        assert_eq!(
+            canos,
+            [
+                505779, 2023116, 2724305, 3009730, 3650314, 2018347, 3879086, 68196, 3162777,
+                1839270, 1508393, 178814, 715259, 2861039, 2430724, 3833584, 3821936, 2617092,
+                1811735, 4124751, 3521105, 1928852
+            ]
+        );
+
+        assert_eq!(
+            minis,
+            [
+                4561, 4561, 4561, 10641, 13066, 13066, 13066, 698, 698, 698, 698, 698, 7184, 5212,
+                5212, 5212, 5212, 5212, 10565, 10565, 5865, 1271
+            ]
+        );
     }
 
-    mod minimizer {
-        #[test]
-        fn basic() {
-            let seq = b"acgtgcgtgagaattgttcggtggaacaggcg";
+    #[test]
+    fn same_in_each_strand() {
+        let fwd = b"CACTCCTGTCACATCATAATCGTTTGCTATT";
+        let rev = b"AATAGCAAACGATTATGATGTGACAGGAGTG";
 
-            let mut token = crate::tokenizer::TokenizerMini::new(seq, 11, 7);
+        let mut fwd_token = TokenizerMini::new(fwd, 11, 7);
+        let mut fwd_canos = Vec::new();
+        let mut fwd_minis = Vec::new();
 
-            let mut kmers = Vec::new();
-            let mut canos = Vec::new();
-            let mut minis = Vec::new();
+        let mut rev_token = TokenizerMini::new(rev, 11, 7);
+        let mut rev_canos = Vec::new();
+        let mut rev_minis = Vec::new();
 
-            while let Some((kmer, mini)) = token.next() {
-                let cano = crate::kmer::cannonical(kmer, 11);
+        while let Some((kmer, mini)) = fwd_token.next() {
+            let cano = crate::kmer::cannonical(kmer, 11);
 
-                kmers.push(kmer);
-                canos.push(cano);
-                minis.push(mini);
-            }
-
-            assert_eq!(
-                kmers,
-                [
-                    505779, 2023116, 3898160, 3009730, 3650314, 2018347, 3879086, 2933434, 3345129,
-                    797607, 3190431, 178814, 715259, 2861039, 3055548, 3833584, 2751425, 2617092,
-                    2079763, 4124751, 3916093, 3081463
-                ]
-            );
-
-            assert_eq!(
-                canos,
-                [
-                    505779, 2023116, 2724305, 3009730, 3650314, 2018347, 3879086, 68196, 3162777,
-                    1839270, 1508393, 178814, 715259, 2861039, 2430724, 3833584, 3821936, 2617092,
-                    1811735, 4124751, 3521105, 1928852
-                ]
-            );
-
-            assert_eq!(
-                minis,
-                [
-                    4561, 4561, 4561, 10641, 13066, 13066, 13066, 698, 698, 698, 698, 698, 7184,
-                    5212, 5212, 5212, 5212, 5212, 10565, 10565, 5865, 1271
-                ]
-            );
+            fwd_canos.push(cano);
+            fwd_minis.push(mini);
         }
 
-        #[test]
-        fn same_in_each_strand() {
-            let fwd = b"CACTCCTGTCACATCATAATCGTTTGCTATT";
-            let rev = b"AATAGCAAACGATTATGATGTGACAGGAGTG";
+        while let Some((kmer, mini)) = rev_token.next() {
+            let cano = crate::kmer::cannonical(kmer, 11);
 
-            let mut fwd_token = crate::tokenizer::TokenizerMini::new(fwd, 11, 7);
-            let mut fwd_canos = Vec::new();
-            let mut fwd_minis = Vec::new();
+            rev_canos.push(cano);
+            rev_minis.push(mini);
+        }
 
-            let mut rev_token = crate::tokenizer::TokenizerMini::new(rev, 11, 7);
-            let mut rev_canos = Vec::new();
-            let mut rev_minis = Vec::new();
+        if !fwd_canos.iter().eq(rev_canos.iter().rev()) {
+            panic!("\nleft: {:?}\nright: {:?}", fwd_canos, rev_canos);
+        }
 
-            while let Some((kmer, mini)) = fwd_token.next() {
-                let cano = crate::kmer::cannonical(kmer, 11);
-
-                fwd_canos.push(cano);
-                fwd_minis.push(mini);
-            }
-
-            while let Some((kmer, mini)) = rev_token.next() {
-                let cano = crate::kmer::cannonical(kmer, 11);
-
-                rev_canos.push(cano);
-                rev_minis.push(mini);
-            }
-
-            if !fwd_canos.iter().eq(rev_canos.iter().rev()) {
-                panic!("\nleft: {:?}\nright: {:?}", fwd_canos, rev_canos);
-            }
-
-            if !fwd_minis.iter().eq(rev_minis.iter().rev()) {
-                panic!("\nleft: {:?}\nright: {:?}", fwd_minis, rev_minis);
-            }
+        if !fwd_minis.iter().eq(rev_minis.iter().rev()) {
+            panic!("\nleft: {:?}\nright: {:?}", fwd_minis, rev_minis);
         }
     }
 }
