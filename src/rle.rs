@@ -74,9 +74,19 @@ fn build_rle(nuc: u8, occurence: u8) -> u8 {
 pub fn rle2kmer(subrel: &[u8]) -> u64 {
     let mut kmer: u64 = 0;
 
-    for n in subrel {
+    let mut iterator = subrel.iter();
+    if let Some(mut prev) = iterator.next().map(|x| rle2bit(*x)) {
         kmer <<= 2;
-        kmer |= rle2bit(*n);
+        kmer |= prev;
+
+        for n in iterator.map(|x| rle2bit(*x)) {
+            if n != prev {
+                kmer <<= 2;
+                kmer |= n;
+
+                prev = n;
+            }
+        }
     }
 
     kmer
@@ -146,6 +156,12 @@ mod test {
             rle2kmer(&seq2rle(b"ACCTTTGAAAG")),
             crate::kmer::seq2bit(b"ACTGAG")
         );
+        assert_eq!(
+            rle2kmer(&seq2rle(
+                b"TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC"
+            )),
+            crate::kmer::seq2bit(b"TAC")
+        );
     }
 
     #[test]
@@ -160,10 +176,10 @@ mod test {
     fn rle2seq_() {
         assert_eq!(rle2seq(&seq2rle(b"ACCGTTAGcATG")), "ACCGTTAGCATG");
         assert_eq!(
-            rle2seq(
-		&seq2rle(b"TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC")
-	    ),
-	    "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC"
-	);
+            rle2seq(&seq2rle(
+                b"TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC"
+            )),
+            "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC"
+        );
     }
 }
