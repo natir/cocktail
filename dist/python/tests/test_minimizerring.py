@@ -1,6 +1,6 @@
 import sys
 
-sys.path.insert(0, sys.path.pop())
+sys.path.append(sys.path.pop(0))
 
 import cocktail
 

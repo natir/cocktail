@@ -51,20 +51,18 @@ pub fn nuc2bit(nuc: u8) -> u64 {
     (nuc as u64 >> 1) & 0b11
 }
 
-static mut KMER2SEQ_BUFFER: [u8; 31] = [0; 31];
-
-/// Convert a 2 bit repersentation in String, **warning** this function isn't thread safe.
+/// Convert a 2 bit repersentation in String.
 #[inline(always)]
 pub fn kmer2seq(mut kmer: u64, k: u8) -> String {
+    let mut buffer: [u8; 31] = [0; 31];
+
     for i in (0..k).rev() {
-        unsafe {
-            KMER2SEQ_BUFFER[i as usize] = bit2nuc(kmer & 0b11);
-        }
+        buffer[i as usize] = bit2nuc(kmer & 0b11);
 
         kmer >>= 2;
     }
 
-    unsafe { String::from_utf8_unchecked((&KMER2SEQ_BUFFER[..k as usize]).to_vec()) }
+    unsafe { String::from_utf8_unchecked((&buffer[..k as usize]).to_vec()) }
 }
 
 /// Convert the 2bit representation of a nucleotide in nucleotide
