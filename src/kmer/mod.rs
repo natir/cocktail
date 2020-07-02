@@ -31,6 +31,9 @@ SOFTWARE.
 //! With this coding and if kmer size is odd, if the popcount of forward is odd the popcount of reverse is even. In this library if a kmer have even popcount is the cannonical kmer.
 //!
 //! If we work only with cannonical kmer, we can remove one bit at any extremity. To reconstruct lost bit, if result have even popcount we add a 0, if it's ood we add 1.
+//!
+//! This 2bit coding is inspired by https://cs.stackexchange.com/questions/82644/compact-mapping-from-an-involuted-set
+
 
 /// Convert a sequence in 2 bit representation if suseq is larger than 32 only the last 32 nuc is store
 #[inline(always)]
@@ -130,58 +133,15 @@ pub fn hash(subseq: &[u8], k: u8) -> u64 {
 
 /// Return the reverse of kmer
 #[inline(always)]
-pub fn rev(kmer: u64, k: u8) -> u64 {
-    loop_rev(kmer, k)
-}
+pub fn rev(mut kmer: u64, k: u8) -> u64 {
+    // Thank to needtail people ! :)
+    kmer = (kmer >> 2 & 0x3333_3333_3333_3333) | (kmer & 0x3333_3333_3333_3333) << 2;
+    kmer = (kmer >> 4 & 0x0F0F_0F0F_0F0F_0F0F) | (kmer & 0x0F0F_0F0F_0F0F_0F0F) << 4;
+    kmer = (kmer >> 8 & 0x00FF_00FF_00FF_00FF) | (kmer & 0x00FF_00FF_00FF_00FF) << 8;
+    kmer = (kmer >> 16 & 0x0000_FFFF_0000_FFFF) | (kmer & 0x0000_FFFF_0000_FFFF) << 16;
+    kmer = (kmer >> 32 & 0x0000_0000_FFFF_FFFF) | (kmer & 0x0000_0000_FFFF_FFFF) << 32;
 
-mod lookup_table;
-
-#[inline(always)]
-pub fn loop_rev(mut kmer: u64, k: u8) -> u64 {
-    let nb_bit = k * 2;
-    let mut reverse: u64 = 0;
-
-    let nb_block = 1 + nb_bit / 8; //odd kmer never fit in 8 block
-
-    for i in 0..nb_block {
-        reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64)
-            << ((nb_block - i - 1) * 8);
-
-        kmer >>= 8;
-    }
-
-    reverse >> (nb_block * 8 - nb_bit)
-}
-
-#[inline(always)]
-pub fn unrool_rev(mut kmer: u64, k: u8) -> u64 {
-    let nb_bit = k * 2;
-    let mut reverse: u64 = 0;
-
-    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 56;
-    kmer >>= 8;
-
-    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 48;
-    kmer >>= 8;
-
-    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 40;
-    kmer >>= 8;
-
-    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 32;
-    kmer >>= 8;
-
-    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 24;
-    kmer >>= 8;
-
-    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 16;
-    kmer >>= 8;
-
-    reverse ^= (lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64) << 8;
-    kmer >>= 8;
-
-    reverse ^= lookup_table::REVERSE_2_LOOKUP[(kmer & 255) as u8 as usize] as u64;
-
-    reverse >> (64 - nb_bit)
+    kmer >> (64 - k * 2)
 }
 
 /// Return the cardinality of cannonical kmer set for a given kmer size
