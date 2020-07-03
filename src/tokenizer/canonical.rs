@@ -36,13 +36,12 @@ use crate::kmer;
 ///     // ... do what you want ...
 /// }
 pub struct Canonical<'a> {
-    k: u8,
+    move_bit: u8,
     kmer_mask: u64,
     seq: &'a [u8],
     pos: usize,
     forward: u64,
     reverse: u64,
-    forward_cano: bool,
 }
 
 impl<'a> Canonical<'a> {
@@ -50,13 +49,12 @@ impl<'a> Canonical<'a> {
         let forward = kmer::seq2bit(&seq[0..((k - 1) as usize)]);
 
         Canonical {
-            k,
+            move_bit: (k - 1) * 2,
             kmer_mask: (1 << (k * 2)) - 1,
             seq,
             pos: (k - 1) as usize,
             forward,
             reverse: kmer::revcomp(forward, k),
-            forward_cano: kmer::parity_even(forward),
         }
     }
 }
@@ -71,18 +69,10 @@ impl<'a> Iterator for Canonical<'a> {
             let nuc = kmer::nuc2bit(self.seq[self.pos]);
             self.pos += 1;
 
-            let chg_cano = ((nuc ^ self.forward >> ((self.k - 1) * 2)).count_ones() % 2) != 0;
-
             self.forward = ((self.forward << 2) & self.kmer_mask) | nuc;
-            self.reverse = self.reverse >> 2 ^ ((nuc ^ 0b10) << ((self.k - 1) * 2));
+            self.reverse = (self.reverse >> 2) ^ ((nuc ^ 0b10) << self.move_bit);
 
-            self.forward_cano = if chg_cano {
-                !self.forward_cano
-            } else {
-                self.forward_cano
-            };
-
-            if self.forward_cano {
+            if kmer::parity_even(self.forward) {
                 Some(self.forward)
             } else {
                 Some(self.reverse)

@@ -44,32 +44,42 @@ fn kmer2seq(c: &mut Criterion) {
 use rand::seq::SliceRandom;
 use rand::Rng;
 
+mod iter_cano;
+
 fn tokenize_canonical(c: &mut Criterion) {
-    let mut g = c.benchmark_group("canonical kmer iteration");
-    let mut rng = rand::thread_rng();
-    let vals = [b'A', b'C', b'G', b'T'];
+    for k in (5..21).step_by(2) {
+        let mut g = c.benchmark_group(format!("canonical kmer iteration k={}", k));
 
-    for i in 3..20 {
-        let len = 1 << i;
+        let mut rng = rand::thread_rng();
+        let vals = [b'A', b'C', b'G', b'T'];
 
-        let seq = (0..len)
-            .map(|_| *vals.choose(&mut rng).unwrap())
-            .collect::<Vec<u8>>();
+        for len in (700..1400).step_by(100) {
+            let seq = (0..len)
+                .map(|_| *vals.choose(&mut rng).unwrap())
+                .collect::<Vec<u8>>();
 
-        g.bench_with_input(BenchmarkId::new("after", len), &seq, |b, seq| {
-            b.iter(|| {
-                cocktail::tokenizer::Tokenizer::new(black_box(&seq), black_box(5))
-                    .map(|x| cocktail::kmer::cannonical(x, 5))
-                    .collect::<Vec<u64>>()
-            })
-        });
+            g.bench_with_input(BenchmarkId::new("after", len), &seq, |b, seq| {
+                b.iter(|| {
+                    cocktail::tokenizer::Tokenizer::new(black_box(&seq), black_box(k))
+                        .map(|x| cocktail::kmer::cannonical(x, k))
+                        .collect::<Vec<u64>>()
+                })
+            });
 
-        g.bench_with_input(BenchmarkId::new("durring", len), &seq, |b, seq| {
-            b.iter(|| {
-                cocktail::tokenizer::Canonical::new(black_box(&seq), black_box(5))
-                    .collect::<Vec<u64>>()
-            })
-        });
+            g.bench_with_input(BenchmarkId::new("durring", len), &seq, |b, seq| {
+                b.iter(|| {
+                    cocktail::tokenizer::Canonical::new(black_box(&seq), black_box(5))
+                        .collect::<Vec<u64>>()
+                })
+            });
+
+            g.bench_with_input(BenchmarkId::new("durring lexi", len), &seq, |b, seq| {
+                b.iter(|| {
+                    iter_cano::Lexi::new(black_box(&seq), black_box(5))
+                        .collect::<Vec<u64>>()
+                })
+            });
+        }
     }
 }
 
