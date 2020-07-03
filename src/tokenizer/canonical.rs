@@ -23,7 +23,7 @@ SOFTWARE.
 /* local use */
 use crate::kmer;
 
-/// An iterator that takes a DNA sequence and produces kmers, in the forward orientation and 2bit form.
+/// An iterator that takes a DNA sequence and produces kmers, in the canonical orientation and 2bit form.
 ///
 /// # Example
 ///
@@ -45,6 +45,7 @@ pub struct Canonical<'a> {
 }
 
 impl<'a> Canonical<'a> {
+    /// Create a new Canonical tokenizer on seq DNA, kmer size is equal to k
     pub fn new(seq: &'a [u8], k: u8) -> Self {
         let forward = kmer::seq2bit(&seq[0..((k - 1) as usize)]);
 

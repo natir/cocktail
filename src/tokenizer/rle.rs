@@ -87,17 +87,17 @@ mod test {
         assert_eq!(
             vec![54, 457, 114, 397],
             TokenizerRLE::new(b"ACTGACTG", 5)
-                .map(|x| crate::kmer::remove_first_bit(crate::kmer::cannonical(x, 5)))
+                .map(|x| crate::kmer::remove_first_bit(crate::kmer::canonical(x, 5)))
                 .collect::<Vec<u64>>()
         );
     }
 
     #[test]
-    fn cannonical() {
+    fn canonical() {
         assert_eq!(
             vec![108, 915, 228, 795],
             TokenizerRLE::new(b"ACTGACTG", 5)
-                .map(|x| crate::kmer::cannonical(x, 5))
+                .map(|x| crate::kmer::canonical(x, 5))
                 .collect::<Vec<u64>>()
         );
     }

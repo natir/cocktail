@@ -28,9 +28,9 @@ SOFTWARE.
 //!
 //! We use the second and thrid bit of each value provide, if you provide no ACTG value this function silently convert to A, C, T or G, for exemple N or n is convert in G.
 //!
-//! With this coding and if kmer size is odd, if the popcount of forward is odd the popcount of reverse is even. In this library if a kmer have even popcount is the cannonical kmer.
+//! With this coding and if kmer size is odd, if the popcount of forward is odd the popcount of reverse is even. In this library if a kmer have even popcount is the canonical kmer.
 //!
-//! If we work only with cannonical kmer, we can remove one bit at any extremity. To reconstruct lost bit, if result have even popcount we add a 0, if it's ood we add 1.
+//! If we work only with canonical kmer, we can remove one bit at any extremity. To reconstruct lost bit, if result have even popcount we add a 0, if it's ood we add 1.
 //!
 //! This 2bit coding is inspired by https://cs.stackexchange.com/questions/82644/compact-mapping-from-an-involuted-set
 
@@ -79,9 +79,9 @@ pub fn bit2nuc(bit: u64) -> u8 {
     }
 }
 
-/// Take a kmer and return the cannonical form
+/// Take a kmer and return the canonical form
 #[inline(always)]
-pub fn cannonical(kmer: u64, k: u8) -> u64 {
+pub fn canonical(kmer: u64, k: u8) -> u64 {
     if parity_even(kmer) {
         kmer
     } else {
@@ -124,10 +124,10 @@ pub fn remove_first_bit(kmer: u64) -> u64 {
     kmer >> 1
 }
 
-/// Take a subseq and return the cannonical kmer with out the rightest bit
+/// Take a subseq and return the canonical kmer with out the rightest bit
 #[inline(always)]
 pub fn hash(subseq: &[u8], k: u8) -> u64 {
-    remove_first_bit(cannonical(seq2bit(subseq), k))
+    remove_first_bit(canonical(seq2bit(subseq), k))
 }
 
 /// Return the reverse of kmer
@@ -143,13 +143,13 @@ pub fn rev(mut kmer: u64, k: u8) -> u64 {
     kmer >> (64 - k * 2)
 }
 
-/// Return the cardinality of cannonical kmer set for a given kmer size
+/// Return the cardinality of canonical kmer set for a given kmer size
 #[inline(always)]
 pub fn get_kmer_space_size(k: u8) -> u64 {
     1 << (k * 2)
 }
 
-/// Return the cardinality of cannonical hash set for a given kmer size
+/// Return the cardinality of canonical hash set for a given kmer size
 #[inline(always)]
 pub fn get_hash_space_size(k: u8) -> u64 {
     1 << (k * 2 - 1)
@@ -183,12 +183,12 @@ mod test {
     }
 
     #[test]
-    fn cannonical_() {
-        // TAGGC -> 1000111101 cannonical TAGGC -> 1000111101
-        assert_eq!(cannonical(0b1000111101, 5), 0b1000111101);
+    fn canonical_() {
+        // TAGGC -> 1000111101 canonical TAGGC -> 1000111101
+        assert_eq!(canonical(0b1000111101, 5), 0b1000111101);
 
-        // GCCTA -> 1101011000 cannonical TAGGC -> 1000111101
-        assert_eq!(cannonical(0b1101011000, 5), 0b1000111101);
+        // GCCTA -> 1101011000 canonical TAGGC -> 1000111101
+        assert_eq!(canonical(0b1101011000, 5), 0b1000111101);
     }
 
     #[test]

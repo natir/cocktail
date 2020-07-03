@@ -40,14 +40,14 @@ int main(void) {
   printf("kmer ACTGT in 2bit %lu\n", kmer);
   printf("246 is kmer %s\n\n", cocktail_kmer2seq(246, 5));
 
-  uint64_t cano = cocktail_cannonical(kmer, 5);
+  uint64_t cano = cocktail_canonical(kmer, 5);
   printf("kmer ACTGT parity %i\n", cocktail_parity_even(kmer));
   printf("kmer ACTGT revcomp parity %i\n", cocktail_parity_even(cano));
-  printf("kmer ACTGT cannonical %lu\n", cano);
+  printf("kmer ACTGT canonical %lu\n", cano);
   printf("kmer ACTGT revcomp %lu\n\n", cocktail_revcomp(kmer, 5));
 
-  printf("kmer ACTGT cannonical first bit %i\n", cocktail_get_first_bit(cano));
-  printf("kmer ACTGT cannonical without first bit %lu\n", cocktail_remove_first_bit(cano));
+  printf("kmer ACTGT canonical first bit %i\n", cocktail_get_first_bit(cano));
+  printf("kmer ACTGT canonical without first bit %lu\n", cocktail_remove_first_bit(cano));
   printf("kmer ACTGT hash %lu\n\n", cocktail_hash("ACTGC", 5));
 
   printf("kmer space %lu\n", cocktail_get_kmer_space_size(5));

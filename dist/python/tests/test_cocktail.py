@@ -20,11 +20,11 @@ def test_kmer2seq_seq2kmer():
     assert cocktail.seq2bit("ACTGC") == 109
     assert cocktail.kmer2seq(246, 5) == b'AGGCT'
 
-def test_cannonical():
+def test_canonical():
     kmer = cocktail.seq2bit("ACTGC")
     assert cocktail.parity_even(kmer) == False
 
-    cano = cocktail.cannonical(kmer, 5)
+    cano = cocktail.canonical(kmer, 5)
     assert cocktail.parity_even(cano) == True
     assert cano == 846
 

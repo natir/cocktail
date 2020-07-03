@@ -25,9 +25,9 @@ typedef struct MinimizerRing MinimizerRing;
 uint8_t cocktail_bit2nuc(uint64_t bit);
 
 /**
- * Binding for [kmer::cannonical] in Python the name is cannonical
+ * Binding for [kmer::canonical] in Python the name is canonical
  */
-uint64_t cocktail_cannonical(uint64_t kmer, uint8_t k);
+uint64_t cocktail_canonical(uint64_t kmer, uint8_t k);
 
 /**
  * Binding for [kmer::comp] in Python the name is comp
@@ -67,6 +67,8 @@ void cocktail_minimizerring_add_kmer(MinimizerRing *miniring,
 
 /**
  * Free a cocktail minimizer ring
+ * # Safety
+ * Pointer is free don't use it after
  */
 void cocktail_minimizerring_free(MinimizerRing *miniring);
 

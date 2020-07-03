@@ -16,8 +16,8 @@ def kmer2seq(kmer: int, k: int) -> str:
 def bit2nuc(bit: int) -> chr:
     return chr(lib.cocktail_bit2nuc(bit))
 
-def cannonical(kmer: int, k: int) -> int:
-    return lib.cocktail_cannonical(kmer, k)
+def canonical(kmer: int, k: int) -> int:
+    return lib.cocktail_canonical(kmer, k)
 
 def parity_even(kmer: int) -> bool:
     return lib.cocktail_parity_even(kmer)

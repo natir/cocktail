@@ -50,10 +50,10 @@ pub extern "C" fn cocktail_bit2nuc(bit: u64) -> u8 {
     kmer::bit2nuc(bit)
 }
 
-/// Binding for [kmer::cannonical] in Python the name is cannonical
+/// Binding for [kmer::canonical] in Python the name is canonical
 #[no_mangle]
-pub extern "C" fn cocktail_cannonical(kmer: u64, k: u8) -> u64 {
-    kmer::cannonical(kmer, k)
+pub extern "C" fn cocktail_canonical(kmer: u64, k: u8) -> u64 {
+    kmer::canonical(kmer, k)
 }
 
 /// Binding for [kmer::parity_even] in Python the name is parity_even

@@ -53,32 +53,37 @@ fn tokenize_canonical(c: &mut Criterion) {
         let mut rng = rand::thread_rng();
         let vals = [b'A', b'C', b'G', b'T'];
 
-        for len in (700..1400).step_by(100) {
+        for i in 5..16 {
+            let len = 1 << i;
+
             let seq = (0..len)
                 .map(|_| *vals.choose(&mut rng).unwrap())
                 .collect::<Vec<u8>>();
 
-            g.bench_with_input(BenchmarkId::new("after", len), &seq, |b, seq| {
+            g.bench_with_input(BenchmarkId::new("only forward", len), &seq, |b, seq| {
                 b.iter(|| {
                     cocktail::tokenizer::Tokenizer::new(black_box(&seq), black_box(k))
-                        .map(|x| cocktail::kmer::cannonical(x, k))
+                        .map(|x| cocktail::kmer::canonical(x, k))
                         .collect::<Vec<u64>>()
                 })
             });
 
-            g.bench_with_input(BenchmarkId::new("durring", len), &seq, |b, seq| {
+            g.bench_with_input(BenchmarkId::new("forward reverse", len), &seq, |b, seq| {
                 b.iter(|| {
                     cocktail::tokenizer::Canonical::new(black_box(&seq), black_box(5))
                         .collect::<Vec<u64>>()
                 })
             });
 
-            g.bench_with_input(BenchmarkId::new("durring lexi", len), &seq, |b, seq| {
-                b.iter(|| {
-                    iter_cano::Lexi::new(black_box(&seq), black_box(5))
-                        .collect::<Vec<u64>>()
-                })
-            });
+            g.bench_with_input(
+                BenchmarkId::new("forward reverse lexi", len),
+                &seq,
+                |b, seq| {
+                    b.iter(|| {
+                        iter_cano::Lexi::new(black_box(&seq), black_box(5)).collect::<Vec<u64>>()
+                    })
+                },
+            );
         }
     }
 }

@@ -118,7 +118,7 @@ impl MinimizerRing {
         for i in 0..max_len {
             let rb_index = (max_len - i - 1) as usize;
 
-            let mini = kmer::cannonical(kmer & self.mask, self.m);
+            let mini = kmer::canonical(kmer & self.mask, self.m);
 
             let local_score = MinimizerRing::get_score(mini);
             self.ring_buffer[rb_index] = (mini, local_score);
@@ -136,7 +136,7 @@ impl MinimizerRing {
 
     /// Add the next kmer
     pub fn add_kmer(&mut self, kmer: u64) {
-        let minimizer = kmer::cannonical(kmer & self.mask, self.m);
+        let minimizer = kmer::canonical(kmer & self.mask, self.m);
         let score = MinimizerRing::get_score(minimizer);
 
         let previous_mini = self.get_mini();
@@ -192,7 +192,7 @@ mod test {
         let mut minis = Vec::new();
 
         while let Some((kmer, mini)) = token.next() {
-            let cano = crate::kmer::cannonical(kmer, 11);
+            let cano = crate::kmer::canonical(kmer, 11);
 
             kmers.push(kmer);
             canos.push(cano);
@@ -240,14 +240,14 @@ mod test {
         let mut rev_minis = Vec::new();
 
         while let Some((kmer, mini)) = fwd_token.next() {
-            let cano = crate::kmer::cannonical(kmer, 11);
+            let cano = crate::kmer::canonical(kmer, 11);
 
             fwd_canos.push(cano);
             fwd_minis.push(mini);
         }
 
         while let Some((kmer, mini)) = rev_token.next() {
-            let cano = crate::kmer::cannonical(kmer, 11);
+            let cano = crate::kmer::canonical(kmer, 11);
 
             rev_canos.push(cano);
             rev_minis.push(mini);
