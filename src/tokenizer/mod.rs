@@ -30,3 +30,6 @@ pub use minimizer::{MinimizerRing, TokenizerMini};
 
 pub mod rle;
 pub use rle::TokenizerRLE;
+
+pub mod canonical;
+pub use canonical::Canonical;

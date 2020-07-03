@@ -11,6 +11,7 @@ crate-type = ["lib", "cdylib", "staticlib"]
 [dependencies]
 
 [dev-dependencies]
+rand      = "0.7"
 criterion = "0.3"
 
 [[bench]]

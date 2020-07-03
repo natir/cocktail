@@ -34,7 +34,6 @@ SOFTWARE.
 //!
 //! This 2bit coding is inspired by https://cs.stackexchange.com/questions/82644/compact-mapping-from-an-involuted-set
 
-
 /// Convert a sequence in 2 bit representation if suseq is larger than 32 only the last 32 nuc is store
 #[inline(always)]
 pub fn seq2bit(subseq: &[u8]) -> u64 {
