@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
+pub mod curve;
 pub mod kmer;
 pub mod rle;
 pub mod tokenizer;
