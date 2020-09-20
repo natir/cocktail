@@ -42,7 +42,7 @@ fn kmer2seq(c: &mut Criterion) {
 }
 
 use rand::seq::SliceRandom;
-use rand::Rng;
+
 
 mod iter_cano;
 
