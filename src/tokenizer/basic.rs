@@ -83,6 +83,11 @@ mod test {
     }
 
     #[test]
+    fn seqlen_equal_k() {
+        assert_eq!(vec![108], Tokenizer::new(b"ACTGA", 5).collect::<Vec<u64>>());
+    }
+
+    #[test]
     fn hash() {
         assert_eq!(
             vec![54, 457, 114, 397],

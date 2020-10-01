@@ -20,21 +20,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-//! Found the first local minimum of a series of u64
-pub fn found_first_local_min(data: &[u64]) -> Option<usize> {
-    for (i, d) in data.windows(2).enumerate() {
-        if d[1] > d[0] {
-            return Some(i);
+//! Based on Kmergenie we assume kmer spectrum is a mixture of Pareto law and some Gaussians law
+//! Erroneous kmer follow Pareto law, Gaussians law represente true and repetitive kmer
+//! We use this property to found the threshold to remove many Erroneous kmer and keep Many True kmer
+pub mod threshold {
+
+    //! The first local minimum match with the intersection of Pareto and Gaussians
+    pub fn first_local_min(data: &[u64]) -> Option<u8> {
+        for (i, d) in data.windows(2).enumerate() {
+            if d[1] > d[0] {
+                return Some(i as u8);
+            }
         }
+
+        None
     }
 
-    None
+    pub fn rarefaction(data: &[u64], limit: f64) -> Option<u8> {
+        //! More we remove kmer less we remove Erroneous kmer when remove less than n percent of total kmer
+        let mut cumulative_kmer = 0;
+
+        for (index, value) in data.iter().enumerate() {
+            cumulative_kmer += index as u64 * value;
+            if (*value as f64 / cumulative_kmer as f64) < limit {
+                return Some(index as u8);
+            }
+        }
+
+        None
+    }
 }
 
 pub fn draw_hist<W>(data: &[u64], mut out: W, point: Option<usize>) -> std::io::Result<()>
 where
     W: std::io::Write,
 {
+    //! Draw kmer spectrum in console
     let shape = get_shape();
 
     let factor = (*data.iter().max().unwrap() as f64).log(10.0) / shape.1 as f64;
@@ -83,6 +104,7 @@ where
     Ok(())
 }
 
+#[allow(dead_code)]
 fn term_size() -> (usize, usize) {
     match term_size::dimensions() {
         Some((w, h)) => (w, h),
@@ -127,16 +149,27 @@ mod tests {
     ];
 
     #[test]
-    fn found_abundance() {
-        assert_eq!(found_first_local_min(&DATA[..]), Some(6));
+    fn first_local_min() {
+        assert_eq!(threshold::first_local_min(&DATA[..]), Some(6));
     }
 
     #[test]
-    #[should_panic]
-    fn failled_found_abundance() {
+    fn failled_first_local_min() {
         let tmp = (0..256).map(|_| 1).collect::<Box<[u64]>>();
 
-        found_first_local_min(&tmp).unwrap();
+        assert_eq!(threshold::first_local_min(&tmp), None);
+    }
+
+    #[test]
+    fn rarefaction() {
+        assert_eq!(threshold::rarefaction(&DATA[..], 0.01), Some(4));
+    }
+
+    #[test]
+    fn failled_rarefaction() {
+        let tmp = (0..256).map(|_| 1).collect::<Box<[u64]>>();
+
+        assert_eq!(threshold::rarefaction(&tmp, 0.00001), None);
     }
 
     #[test]

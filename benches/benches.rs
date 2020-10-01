@@ -43,7 +43,6 @@ fn kmer2seq(c: &mut Criterion) {
 
 use rand::seq::SliceRandom;
 
-
 mod iter_cano;
 
 fn tokenize_canonical(c: &mut Criterion) {
