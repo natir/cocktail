@@ -47,7 +47,7 @@ pub struct TokenizerMini<'a> {
 }
 
 impl<'a> TokenizerMini<'a> {
-    /// Create a new TokenizerMini on seq DNA kmer size is equal to k
+    /// Create a new TokenizerMini on seq DNA kmer size is equal to k, minimizer size is equal to m
     pub fn new(seq: &'a [u8], k: u8, m: u8) -> Self {
         let kmer = kmer::seq2bit(&seq[0..((k - 1) as usize)]);
 

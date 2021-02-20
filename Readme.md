@@ -40,3 +40,7 @@ make
 ```
 
 Dynamic and static library is avaible her `target/release/libcocktail.{a|so}` header is her `dist/c/cocktail.h`. To build a C programe you need to add `-lpthread -lm -ldl` durring linking phase.
+
+## Minimum supported Rust version
+
+Currently the minimum supported Rust version is 1.45.0.
