@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Canonical","An iterator that takes a DNA sequence and produces kmers, in the canonical orientation and 2bit form."]]});

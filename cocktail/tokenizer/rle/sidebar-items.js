@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["TokenizerRLE","An iterator that takes a DNA sequence and produces kmers, in the forward orientation and 2bit form, homopolymer are compacted."]]});

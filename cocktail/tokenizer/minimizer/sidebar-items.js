@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["MinimizerRing","A struct to get minimizer of sucessive kmer"],["TokenizerMini","An iterator that takes a DNA sequence and produces kmers (in the forward direction and 2bit form) and the associated minimizer."]]});
