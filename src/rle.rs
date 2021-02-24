@@ -27,7 +27,7 @@ SOFTWARE.
 //! ACCTGGGAAT -> 1A2CT3G2A1T
 //!
 //! A RLE symbol are encode on a byte.
-//! The two lowweight bits encode the nucletoide value, see [kmer] module for more details.
+//! The two lowweight bits encode the nucletoide value, see [kmer](crate::kmer) module for more details.
 //! - A or a -> 00
 //! - C or c -> 01
 //! - T or t -> 10

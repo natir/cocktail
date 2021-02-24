@@ -1,9 +1,9 @@
-# Cocktail
-
 [![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/natir/cocktail/blob/master/LICENSE)
 ![CI](https://github.com/natir/cocktail/workflows/CI/badge.svg)
 [![Documentation](https://github.com/natir/cocktail/workflows/Documentation/badge.svg)](https://natir.github.io/cocktail/cocktail)
 [![CodeCov](https://codecov.io/gh/natir/cocktail/branch/master/graph/badge.svg)](https://codecov.io/gh/natir/cocktail)
+
+# Cocktail
 
 Cocktail it's a rust crate, python module, c library, to convert DNA in kmer 2 bit representation and get is cannonical version.
 
