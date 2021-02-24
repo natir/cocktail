@@ -9,11 +9,12 @@ Cocktail it's a rust crate, python module, c library, to convert DNA in kmer 2 b
 
 **Warning this isn't stable, API can change any time**
 
+- [Instalation](#instalation)
 - [Usage](#usage)
 - [Minimum supported Rust version](#minimum-supported-rust-version)
 - [Citation](#citation)
 
-# Usage
+## Instalation
 
 ## Rust
 
@@ -22,18 +23,14 @@ In `[dependencies]` section of your `Cargo.toml` add this:
 cocktail = { git="https://github.com/natir/cocktail.git" }
 ```
 
-## Python 
-
-You need [rust toolchain setup on your system](https://rustup.rs/)
+## Python binding
 
 Give this to pip:
 ```
 git+https://github.com/natir/cocktail.git#egg=cocktail&subdirectory=dist/python
 ```
 
-## C
-
-You need [rust toolchain setup on your system](https://rustup.rs/)
+## C binding
 
 ```
 git clone https://github.com/natir/cocktail.git
@@ -47,6 +44,10 @@ make
 ```
 
 Dynamic and static library is avaible her `target/release/libcocktail.{a|so}` header is her `dist/c/cocktail.h`. To build a C programe you need to add `-lpthread -lm -ldl` durring linking phase.
+
+## Usage
+
+Check [documentation](https://natir.github.io/cocktail/cocktail)
 
 ## Minimum supported Rust version
 
