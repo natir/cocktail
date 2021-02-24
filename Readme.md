@@ -9,6 +9,10 @@ Cocktail it's a rust crate, python module, c library, to convert DNA in kmer 2 b
 
 **Warning this isn't stable, API can change any time**
 
+- [Usage](#usage)
+- [Minimum supported Rust version](#minimum-supported-rust-version)
+- [Citation](#citation)
+
 # Usage
 
 ## Rust
@@ -47,3 +51,7 @@ Dynamic and static library is avaible her `target/release/libcocktail.{a|so}` he
 ## Minimum supported Rust version
 
 Currently the minimum supported Rust version is 1.45.0.
+
+## Citation
+
+WIP
