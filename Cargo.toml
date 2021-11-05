@@ -2,7 +2,7 @@
 name = "cocktail"
 version = "0.1.0"
 authors = ["Pierre Marijon <pmarijon@mpi-inf.mpg.de>"]
-edition = "2018"
+edition = "2021"
 
 [lib]
 name = "cocktail"
