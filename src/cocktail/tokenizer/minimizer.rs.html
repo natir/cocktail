@@ -1,7 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tokenizer/minimizer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>minimizer.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../cocktail/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;tokenizer&#x2F;minimizer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>minimizer.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../cocktail/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -265,8 +262,7 @@
 <span id="262">262</span>
 <span id="263">263</span>
 <span id="264">264</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="comment">/*
+</pre><pre class="rust"><code><span class="comment">/*
 Copyright (c) 2020 Pierre Marijon &lt;pmarijon@mpi-inf.mpg.de&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -289,10 +285,10 @@ SOFTWARE.
  */</span>
 
 <span class="comment">/* standard use */</span>
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">BitXor</span>;
+<span class="kw">use</span> <span class="ident">std::ops::BitXor</span>;
 
 <span class="comment">/* local use */</span>
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">kmer</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::kmer</span>;
 
 <span class="doccomment">/// An iterator that takes a DNA sequence and produces kmers (in the forward direction and 2bit form) and the associated minimizer.</span>
 <span class="doccomment">///</span>
@@ -317,14 +313,14 @@ SOFTWARE.
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">TokenizerMini</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a new TokenizerMini on seq DNA kmer size is equal to k, minimizer size is equal to m</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">seq</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>], <span class="ident">k</span>: <span class="ident">u8</span>, <span class="ident">m</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">kmer</span> <span class="op">=</span> <span class="ident">kmer</span>::<span class="ident">seq2bit</span>(<span class="kw-2">&amp;</span><span class="ident">seq</span>[<span class="number">0</span>..((<span class="ident">k</span> <span class="op">-</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>)]);
+        <span class="kw">let</span> <span class="ident">kmer</span> <span class="op">=</span> <span class="ident">kmer::seq2bit</span>(<span class="kw-2">&amp;</span><span class="ident">seq</span>[<span class="number">0</span>..((<span class="ident">k</span> <span class="op">-</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>)]);
 
         <span class="self">Self</span> {
             <span class="ident">kmer_mask</span>: (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="ident">k</span> <span class="op">*</span> <span class="number">2</span>)) <span class="op">-</span> <span class="number">1</span>,
             <span class="ident">seq</span>,
             <span class="ident">pos</span>: (<span class="ident">k</span> <span class="op">-</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>,
             <span class="ident">kmer</span>,
-            <span class="ident">minimizer</span>: <span class="ident">MinimizerRing</span>::<span class="ident">new</span>(<span class="ident">k</span>, <span class="ident">m</span>, <span class="ident">kmer</span>),
+            <span class="ident">minimizer</span>: <span class="ident">MinimizerRing::new</span>(<span class="ident">k</span>, <span class="ident">m</span>, <span class="ident">kmer</span>),
         }
     }
 }
@@ -332,11 +328,11 @@ SOFTWARE.
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">TokenizerMini</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> (<span class="ident">u64</span>, <span class="ident">u64</span>);
 
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Item</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">pos</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">seq</span>.<span class="ident">len</span>() {
             <span class="prelude-val">None</span>
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">kmer</span> <span class="op">=</span> ((<span class="self">self</span>.<span class="ident">kmer</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">2</span>) <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">kmer_mask</span>) <span class="op">|</span> <span class="ident">kmer</span>::<span class="ident">nuc2bit</span>(<span class="self">self</span>.<span class="ident">seq</span>[<span class="self">self</span>.<span class="ident">pos</span>]);
+            <span class="self">self</span>.<span class="ident">kmer</span> <span class="op">=</span> ((<span class="self">self</span>.<span class="ident">kmer</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">2</span>) <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">kmer_mask</span>) <span class="op">|</span> <span class="ident">kmer::nuc2bit</span>(<span class="self">self</span>.<span class="ident">seq</span>[<span class="self">self</span>.<span class="ident">pos</span>]);
 
             <span class="self">self</span>.<span class="ident">minimizer</span>.<span class="ident">add_kmer</span>(<span class="self">self</span>.<span class="ident">kmer</span>);
 
@@ -365,7 +361,7 @@ SOFTWARE.
     <span class="doccomment">/// Create a MinimizerRing, with kmer size equale to `k`, subkmer size equale to `m` and init ring buffer with `kmer`</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">k</span>: <span class="ident">u8</span>, <span class="ident">m</span>: <span class="ident">u8</span>, <span class="ident">kmer</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">obj</span> <span class="op">=</span> <span class="self">Self</span> {
-            <span class="ident">ring_buffer</span>: <span class="macro">vec</span><span class="macro">!</span>[(<span class="number">0</span>, <span class="number">0</span>); (<span class="ident">k</span> <span class="op">-</span> <span class="ident">m</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>].<span class="ident">into_boxed_slice</span>(),
+            <span class="ident">ring_buffer</span>: <span class="macro">vec!</span>[(<span class="number">0</span>, <span class="number">0</span>); (<span class="ident">k</span> <span class="op">-</span> <span class="ident">m</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>].<span class="ident">into_boxed_slice</span>(),
             <span class="ident">current</span>: <span class="number">0</span>,
             <span class="ident">minimizer</span>: <span class="number">0</span>,
             <span class="ident">mask</span>: (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="ident">m</span> <span class="op">*</span> <span class="number">2</span>)) <span class="op">-</span> <span class="number">1</span>,
@@ -380,15 +376,15 @@ SOFTWARE.
 
     <span class="doccomment">/// Reset the ring buffer with a new kmer</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">populate_buffer</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">kmer</span>: <span class="ident">u64</span>) {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">score</span> <span class="op">=</span> <span class="ident">u64</span>::<span class="ident">max_value</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">score</span> <span class="op">=</span> <span class="ident">u64::max_value</span>();
         <span class="kw">let</span> <span class="ident">max_len</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">k</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">m</span> <span class="op">+</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>;
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">max_len</span> {
             <span class="kw">let</span> <span class="ident">rb_index</span> <span class="op">=</span> (<span class="ident">max_len</span> <span class="op">-</span> <span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">usize</span>;
 
-            <span class="kw">let</span> <span class="ident">mini</span> <span class="op">=</span> <span class="ident">kmer</span>::<span class="ident">canonical</span>(<span class="ident">kmer</span> <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">mask</span>, <span class="self">self</span>.<span class="ident">m</span>);
+            <span class="kw">let</span> <span class="ident">mini</span> <span class="op">=</span> <span class="ident">kmer::canonical</span>(<span class="ident">kmer</span> <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">mask</span>, <span class="self">self</span>.<span class="ident">m</span>);
 
-            <span class="kw">let</span> <span class="ident">local_score</span> <span class="op">=</span> <span class="ident">MinimizerRing</span>::<span class="ident">get_score</span>(<span class="ident">mini</span>);
+            <span class="kw">let</span> <span class="ident">local_score</span> <span class="op">=</span> <span class="ident">MinimizerRing::get_score</span>(<span class="ident">mini</span>);
             <span class="self">self</span>.<span class="ident">ring_buffer</span>[<span class="ident">rb_index</span>] <span class="op">=</span> (<span class="ident">mini</span>, <span class="ident">local_score</span>);
 
             <span class="kw">if</span> <span class="ident">local_score</span> <span class="op">&lt;</span> <span class="ident">score</span> {
@@ -404,8 +400,8 @@ SOFTWARE.
 
     <span class="doccomment">/// Add the next kmer</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_kmer</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">kmer</span>: <span class="ident">u64</span>) {
-        <span class="kw">let</span> <span class="ident">minimizer</span> <span class="op">=</span> <span class="ident">kmer</span>::<span class="ident">canonical</span>(<span class="ident">kmer</span> <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">mask</span>, <span class="self">self</span>.<span class="ident">m</span>);
-        <span class="kw">let</span> <span class="ident">score</span> <span class="op">=</span> <span class="ident">MinimizerRing</span>::<span class="ident">get_score</span>(<span class="ident">minimizer</span>);
+        <span class="kw">let</span> <span class="ident">minimizer</span> <span class="op">=</span> <span class="ident">kmer::canonical</span>(<span class="ident">kmer</span> <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">mask</span>, <span class="self">self</span>.<span class="ident">m</span>);
+        <span class="kw">let</span> <span class="ident">score</span> <span class="op">=</span> <span class="ident">MinimizerRing::get_score</span>(<span class="ident">minimizer</span>);
 
         <span class="kw">let</span> <span class="ident">previous_mini</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_mini</span>();
         <span class="self">self</span>.<span class="ident">ring_buffer</span>[<span class="self">self</span>.<span class="ident">current</span>] <span class="op">=</span> (<span class="ident">minimizer</span>, <span class="ident">score</span>);
@@ -426,7 +422,7 @@ SOFTWARE.
 
     <span class="kw">fn</span> <span class="ident">update_minimizer</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">index</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">min</span> <span class="op">=</span> <span class="ident">u64</span>::<span class="ident">max_value</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">min</span> <span class="op">=</span> <span class="ident">u64::max_value</span>();
 
         <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">elt</span>) <span class="kw">in</span> <span class="self">self</span>.<span class="ident">ring_buffer</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
             <span class="kw">if</span> <span class="ident">elt</span>.<span class="number">1</span> <span class="op">&lt;</span> <span class="ident">min</span> {
@@ -453,21 +449,21 @@ SOFTWARE.
     <span class="kw">fn</span> <span class="ident">basic</span>() {
         <span class="kw">let</span> <span class="ident">seq</span> <span class="op">=</span> <span class="string">b&quot;acgtgcgtgagaattgttcggtggaacaggcg&quot;</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">TokenizerMini</span>::<span class="ident">new</span>(<span class="ident">seq</span>, <span class="number">11</span>, <span class="number">7</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">token</span> <span class="op">=</span> <span class="ident">TokenizerMini::new</span>(<span class="ident">seq</span>, <span class="number">11</span>, <span class="number">7</span>);
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">kmers</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">canos</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">minis</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">kmers</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">canos</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">minis</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
         <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">kmer</span>, <span class="ident">mini</span>)) <span class="op">=</span> <span class="ident">token</span>.<span class="ident">next</span>() {
-            <span class="kw">let</span> <span class="ident">cano</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">kmer</span>::<span class="ident">canonical</span>(<span class="ident">kmer</span>, <span class="number">11</span>);
+            <span class="kw">let</span> <span class="ident">cano</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::kmer::canonical</span>(<span class="ident">kmer</span>, <span class="number">11</span>);
 
             <span class="ident">kmers</span>.<span class="ident">push</span>(<span class="ident">kmer</span>);
             <span class="ident">canos</span>.<span class="ident">push</span>(<span class="ident">cano</span>);
             <span class="ident">minis</span>.<span class="ident">push</span>(<span class="ident">mini</span>);
         }
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">kmers</span>,
             [
                 <span class="number">505779</span>, <span class="number">2023116</span>, <span class="number">3898160</span>, <span class="number">3009730</span>, <span class="number">3650314</span>, <span class="number">2018347</span>, <span class="number">3879086</span>, <span class="number">2933434</span>, <span class="number">3345129</span>,
@@ -476,7 +472,7 @@ SOFTWARE.
             ]
         );
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">canos</span>,
             [
                 <span class="number">505779</span>, <span class="number">2023116</span>, <span class="number">2724305</span>, <span class="number">3009730</span>, <span class="number">3650314</span>, <span class="number">2018347</span>, <span class="number">3879086</span>, <span class="number">68196</span>, <span class="number">3162777</span>,
@@ -485,7 +481,7 @@ SOFTWARE.
             ]
         );
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="macro">assert_eq!</span>(
             <span class="ident">minis</span>,
             [
                 <span class="number">4561</span>, <span class="number">4561</span>, <span class="number">4561</span>, <span class="number">10641</span>, <span class="number">13066</span>, <span class="number">13066</span>, <span class="number">13066</span>, <span class="number">698</span>, <span class="number">698</span>, <span class="number">698</span>, <span class="number">698</span>, <span class="number">698</span>, <span class="number">7184</span>, <span class="number">5212</span>,
@@ -499,36 +495,38 @@ SOFTWARE.
         <span class="kw">let</span> <span class="ident">fwd</span> <span class="op">=</span> <span class="string">b&quot;CACTCCTGTCACATCATAATCGTTTGCTATT&quot;</span>;
         <span class="kw">let</span> <span class="ident">rev</span> <span class="op">=</span> <span class="string">b&quot;AATAGCAAACGATTATGATGTGACAGGAGTG&quot;</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fwd_token</span> <span class="op">=</span> <span class="ident">TokenizerMini</span>::<span class="ident">new</span>(<span class="ident">fwd</span>, <span class="number">11</span>, <span class="number">7</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fwd_canos</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fwd_minis</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fwd_token</span> <span class="op">=</span> <span class="ident">TokenizerMini::new</span>(<span class="ident">fwd</span>, <span class="number">11</span>, <span class="number">7</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fwd_canos</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fwd_minis</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rev_token</span> <span class="op">=</span> <span class="ident">TokenizerMini</span>::<span class="ident">new</span>(<span class="ident">rev</span>, <span class="number">11</span>, <span class="number">7</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rev_canos</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rev_minis</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rev_token</span> <span class="op">=</span> <span class="ident">TokenizerMini::new</span>(<span class="ident">rev</span>, <span class="number">11</span>, <span class="number">7</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rev_canos</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rev_minis</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
         <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">kmer</span>, <span class="ident">mini</span>)) <span class="op">=</span> <span class="ident">fwd_token</span>.<span class="ident">next</span>() {
-            <span class="kw">let</span> <span class="ident">cano</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">kmer</span>::<span class="ident">canonical</span>(<span class="ident">kmer</span>, <span class="number">11</span>);
+            <span class="kw">let</span> <span class="ident">cano</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::kmer::canonical</span>(<span class="ident">kmer</span>, <span class="number">11</span>);
 
             <span class="ident">fwd_canos</span>.<span class="ident">push</span>(<span class="ident">cano</span>);
             <span class="ident">fwd_minis</span>.<span class="ident">push</span>(<span class="ident">mini</span>);
         }
 
         <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">kmer</span>, <span class="ident">mini</span>)) <span class="op">=</span> <span class="ident">rev_token</span>.<span class="ident">next</span>() {
-            <span class="kw">let</span> <span class="ident">cano</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">kmer</span>::<span class="ident">canonical</span>(<span class="ident">kmer</span>, <span class="number">11</span>);
+            <span class="kw">let</span> <span class="ident">cano</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::kmer::canonical</span>(<span class="ident">kmer</span>, <span class="number">11</span>);
 
             <span class="ident">rev_canos</span>.<span class="ident">push</span>(<span class="ident">cano</span>);
             <span class="ident">rev_minis</span>.<span class="ident">push</span>(<span class="ident">mini</span>);
         }
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">fwd_canos</span>.<span class="ident">iter</span>().<span class="ident">eq</span>(<span class="ident">rev_canos</span>.<span class="ident">iter</span>().<span class="ident">rev</span>()) {
-            <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;\nleft: {:?}\nright: {:?}&quot;</span>, <span class="ident">fwd_canos</span>, <span class="ident">rev_canos</span>);
+            <span class="macro">panic!</span>(<span class="string">&quot;\nleft: {:?}\nright: {:?}&quot;</span>, <span class="ident">fwd_canos</span>, <span class="ident">rev_canos</span>);
         }
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">fwd_minis</span>.<span class="ident">iter</span>().<span class="ident">eq</span>(<span class="ident">rev_minis</span>.<span class="ident">iter</span>().<span class="ident">rev</span>()) {
-            <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;\nleft: {:?}\nright: {:?}&quot;</span>, <span class="ident">fwd_minis</span>, <span class="ident">rev_minis</span>);
+            <span class="macro">panic!</span>(<span class="string">&quot;\nleft: {:?}\nright: {:?}&quot;</span>, <span class="ident">fwd_minis</span>, <span class="ident">rev_minis</span>);
         }
     }
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "cocktail";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="cocktail" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
+</body></html>

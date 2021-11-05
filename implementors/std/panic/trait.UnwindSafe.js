@@ -1,3 +1,0 @@
-(function() {var implementors = {};
-implementors["cocktail"] = [{"text":"impl&lt;'a&gt; UnwindSafe for Tokenizer&lt;'a&gt;","synthetic":true,"types":[]},{"text":"impl&lt;'a&gt; UnwindSafe for TokenizerMini&lt;'a&gt;","synthetic":true,"types":[]},{"text":"impl UnwindSafe for MinimizerRing","synthetic":true,"types":[]},{"text":"impl UnwindSafe for TokenizerRLE","synthetic":true,"types":[]},{"text":"impl&lt;'a&gt; UnwindSafe for Canonical&lt;'a&gt;","synthetic":true,"types":[]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

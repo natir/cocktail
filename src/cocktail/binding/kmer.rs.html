@@ -1,7 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/binding/kmer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>kmer.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../cocktail/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;binding&#x2F;kmer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>kmer.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../cocktail/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -114,8 +111,7 @@
 <span id="111">111</span>
 <span id="112">112</span>
 <span id="113">113</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="comment">/*
+</pre><pre class="rust"><code><span class="comment">/*
 Copyright (c) 2020 Pierre Marijon &lt;pmarijon@mpi-inf.mpg.de&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -137,96 +133,98 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */</span>
 
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">kmer</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::kmer</span>;
 
 <span class="doccomment">/// Binding for [kmer::seq2bit] in Python the name is seq2bit and the parameter len isn&#39;t present</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
-<span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_seq2bit</span>(<span class="ident">c_subseq</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::<span class="ident">c_char</span>, <span class="ident">len</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-    <span class="kw">let</span> <span class="ident">subseq</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">std</span>::<span class="ident">slice</span>::<span class="ident">from_raw_parts</span>(<span class="ident">c_subseq</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u8</span>, <span class="ident">len</span>) };
+<span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_seq2bit</span>(<span class="ident">c_subseq</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">std::os::raw::c_char</span>, <span class="ident">len</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">let</span> <span class="ident">subseq</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">std::slice::from_raw_parts</span>(<span class="ident">c_subseq</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u8</span>, <span class="ident">len</span>) };
 
-    <span class="ident">kmer</span>::<span class="ident">seq2bit</span>(<span class="ident">subseq</span>)
+    <span class="ident">kmer::seq2bit</span>(<span class="ident">subseq</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::nuc2bit] in Python the name is nuc2bit</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_nuc2bit</span>(<span class="ident">nuc</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-    <span class="ident">kmer</span>::<span class="ident">nuc2bit</span>(<span class="ident">nuc</span>)
+    <span class="ident">kmer::nuc2bit</span>(<span class="ident">nuc</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::kmer2seq] in Python the name is kmer2seq</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
-<span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_kmer2seq</span>(<span class="ident">kmer</span>: <span class="ident">u64</span>, <span class="ident">k</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::<span class="ident">c_char</span> {
-    <span class="kw">let</span> <span class="ident">c_string</span> <span class="op">=</span> <span class="ident">kmer</span>::<span class="ident">kmer2seq</span>(<span class="ident">kmer</span>, <span class="ident">k</span>);
+<span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_kmer2seq</span>(<span class="ident">kmer</span>: <span class="ident">u64</span>, <span class="ident">k</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">std::os::raw::c_char</span> {
+    <span class="kw">let</span> <span class="ident">c_string</span> <span class="op">=</span> <span class="ident">kmer::kmer2seq</span>(<span class="ident">kmer</span>, <span class="ident">k</span>);
 
-    <span class="kw">unsafe</span> { <span class="ident">std</span>::<span class="ident">ffi</span>::<span class="ident">CString</span>::<span class="ident">from_vec_unchecked</span>(<span class="ident">c_string</span>.<span class="ident">into_bytes</span>()).<span class="ident">into_raw</span>() }
+    <span class="kw">unsafe</span> { <span class="ident">std::ffi::CString::from_vec_unchecked</span>(<span class="ident">c_string</span>.<span class="ident">into_bytes</span>()).<span class="ident">into_raw</span>() }
 }
 
 <span class="doccomment">/// Binding for [kmer::bit2nuc] in Python the name is bit2nuc</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_bit2nuc</span>(<span class="ident">bit</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
-    <span class="ident">kmer</span>::<span class="ident">bit2nuc</span>(<span class="ident">bit</span>)
+    <span class="ident">kmer::bit2nuc</span>(<span class="ident">bit</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::canonical] in Python the name is canonical</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_canonical</span>(<span class="ident">kmer</span>: <span class="ident">u64</span>, <span class="ident">k</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-    <span class="ident">kmer</span>::<span class="ident">canonical</span>(<span class="ident">kmer</span>, <span class="ident">k</span>)
+    <span class="ident">kmer::canonical</span>(<span class="ident">kmer</span>, <span class="ident">k</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::parity_even] in Python the name is parity_even</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_parity_even</span>(<span class="ident">kmer</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-    <span class="ident">kmer</span>::<span class="ident">parity_even</span>(<span class="ident">kmer</span>)
+    <span class="ident">kmer::parity_even</span>(<span class="ident">kmer</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::revcomp] in Python the name is revcomp</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_revcomp</span>(<span class="ident">kmer</span>: <span class="ident">u64</span>, <span class="ident">k</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-    <span class="ident">kmer</span>::<span class="ident">revcomp</span>(<span class="ident">kmer</span>, <span class="ident">k</span>)
+    <span class="ident">kmer::revcomp</span>(<span class="ident">kmer</span>, <span class="ident">k</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::comp] in Python the name is comp</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_comp</span>(<span class="ident">kmer</span>: <span class="ident">u64</span>, <span class="ident">k</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-    <span class="ident">kmer</span>::<span class="ident">comp</span>(<span class="ident">kmer</span>, <span class="ident">k</span>)
+    <span class="ident">kmer::comp</span>(<span class="ident">kmer</span>, <span class="ident">k</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::get_first_bit] in Python the name is get_first_bit</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_get_first_bit</span>(<span class="ident">kmer</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-    <span class="ident">kmer</span>::<span class="ident">get_first_bit</span>(<span class="ident">kmer</span>)
+    <span class="ident">kmer::get_first_bit</span>(<span class="ident">kmer</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::remove_first_bit] in Python the name is remove_first_bit</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_remove_first_bit</span>(<span class="ident">kmer</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-    <span class="ident">kmer</span>::<span class="ident">remove_first_bit</span>(<span class="ident">kmer</span>)
+    <span class="ident">kmer::remove_first_bit</span>(<span class="ident">kmer</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::hash] in Python the name is hash</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
-<span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_hash</span>(<span class="ident">c_subseq</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::<span class="ident">c_char</span>, <span class="ident">k</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-    <span class="kw">let</span> <span class="ident">subseq</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">std</span>::<span class="ident">slice</span>::<span class="ident">from_raw_parts</span>(<span class="ident">c_subseq</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u8</span>, <span class="ident">k</span> <span class="kw">as</span> <span class="ident">usize</span>) };
+<span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_hash</span>(<span class="ident">c_subseq</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">std::os::raw::c_char</span>, <span class="ident">k</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">let</span> <span class="ident">subseq</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">std::slice::from_raw_parts</span>(<span class="ident">c_subseq</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u8</span>, <span class="ident">k</span> <span class="kw">as</span> <span class="ident">usize</span>) };
 
-    <span class="ident">kmer</span>::<span class="ident">hash</span>(<span class="ident">subseq</span>, <span class="ident">k</span>)
+    <span class="ident">kmer::hash</span>(<span class="ident">subseq</span>, <span class="ident">k</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::rev] in Python the name is rev</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_rev</span>(<span class="ident">kmer</span>: <span class="ident">u64</span>, <span class="ident">k</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-    <span class="ident">kmer</span>::<span class="ident">rev</span>(<span class="ident">kmer</span>, <span class="ident">k</span>)
+    <span class="ident">kmer::rev</span>(<span class="ident">kmer</span>, <span class="ident">k</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::get_kmer_space_size] in Python the name is get_kmer_space_size</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_get_kmer_space_size</span>(<span class="ident">k</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-    <span class="ident">kmer</span>::<span class="ident">get_kmer_space_size</span>(<span class="ident">k</span>)
+    <span class="ident">kmer::get_kmer_space_size</span>(<span class="ident">k</span>)
 }
 
 <span class="doccomment">/// Binding for [kmer::get_hash_space_size] in Python the name is get_hash_space_size</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">cocktail_get_hash_space_size</span>(<span class="ident">k</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-    <span class="ident">kmer</span>::<span class="ident">get_hash_space_size</span>(<span class="ident">k</span>)
+    <span class="ident">kmer::get_hash_space_size</span>(<span class="ident">k</span>)
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "cocktail";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="cocktail" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
+</body></html>
