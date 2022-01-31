@@ -18,7 +18,7 @@ Cocktail it's a rust crate, python module, c library, to convert DNA in kmer 2 b
 
 ## Rust
 
-In `[dependencies]` section of your `Cargo.toml` add this: 
+In `[dependencies]` section of your `Cargo.toml` add this:
 ```
 cocktail = { git="https://github.com/natir/cocktail.git" }
 ```
@@ -51,7 +51,7 @@ Check [documentation](https://natir.github.io/cocktail/cocktail)
 
 ## Minimum supported Rust version
 
-Currently the minimum supported Rust version is 1.45.0.
+Currently the minimum supported Rust version is 1.56.0.
 
 ## Citation
 
