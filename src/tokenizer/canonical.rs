@@ -40,22 +40,20 @@ pub struct Canonical<'a> {
     kmer_mask: u64,
     seq: &'a [u8],
     pos: usize,
-    forward: u64,
-    reverse: u64,
+    kmers: [u64; 2],
 }
 
 impl<'a> Canonical<'a> {
     /// Create a new Canonical tokenizer on seq DNA, kmer size is equal to k
     pub fn new(seq: &'a [u8], k: u8) -> Self {
-        let forward = kmer::seq2bit(&seq[0..((k - 1) as usize)]);
+        let forward = unsafe { kmer::seq2bit(seq.get_unchecked(0..((k - 1) as usize))) };
 
         Canonical {
             move_bit: (k - 1) * 2,
             kmer_mask: (1 << (k * 2)) - 1,
             seq,
             pos: (k - 1) as usize,
-            forward,
-            reverse: kmer::revcomp(forward, k),
+            kmers: [forward, kmer::revcomp(forward, k)],
         }
     }
 }
@@ -67,16 +65,20 @@ impl<'a> Iterator for Canonical<'a> {
         if self.pos == self.seq.len() {
             None
         } else {
-            let nuc = kmer::nuc2bit(self.seq[self.pos]);
-            self.pos += 1;
+            unsafe {
+                let nuc = kmer::nuc2bit(*self.seq.get_unchecked(self.pos));
+                self.pos += 1;
 
-            self.forward = ((self.forward << 2) & self.kmer_mask) | nuc;
-            self.reverse = (self.reverse >> 2) ^ ((nuc ^ 0b10) << self.move_bit);
+                *self.kmers.get_unchecked_mut(0) =
+                    ((self.kmers.get_unchecked(0) << 2) & self.kmer_mask) | nuc;
+                *self.kmers.get_unchecked_mut(1) =
+                    (*self.kmers.get_unchecked(1) >> 2) ^ ((nuc ^ 0b10) << self.move_bit);
 
-            if kmer::parity_even(self.forward) {
-                Some(self.forward)
-            } else {
-                Some(self.reverse)
+                if kmer::parity_even(*self.kmers.get_unchecked(0)) {
+                    Some(*self.kmers.get_unchecked(0))
+                } else {
+                    Some(*self.kmers.get_unchecked(1))
+                }
             }
         }
     }
