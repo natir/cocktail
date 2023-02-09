@@ -46,13 +46,13 @@ use rand::seq::SliceRandom;
 mod iter_cano;
 
 fn tokenize_canonical(c: &mut Criterion) {
-    for k in (5..21).step_by(2) {
-        let mut g = c.benchmark_group(format!("canonical kmer iteration k={}", k));
+    for k in (5..19).step_by(2) {
+        let mut g = c.benchmark_group(format!("canonical kmer iteration k={k}"));
 
         let mut rng = rand::thread_rng();
         let vals = [b'A', b'C', b'G', b'T'];
 
-        for i in 5..16 {
+        for i in 7..16 {
             let len = 1 << i;
 
             let seq = (0..len)
@@ -60,17 +60,19 @@ fn tokenize_canonical(c: &mut Criterion) {
                 .collect::<Vec<u8>>();
 
             g.bench_with_input(BenchmarkId::new("only forward", len), &seq, |b, seq| {
-                b.iter(|| {
-                    cocktail::tokenizer::Tokenizer::new(black_box(&seq), black_box(k))
+                black_box(b.iter(|| {
+                    cocktail::tokenizer::Tokenizer::new(black_box(seq), black_box(k))
                         .map(|x| cocktail::kmer::canonical(x, k))
                         .collect::<Vec<u64>>()
-                })
+                }))
             });
 
             g.bench_with_input(BenchmarkId::new("forward reverse", len), &seq, |b, seq| {
                 b.iter(|| {
-                    cocktail::tokenizer::Canonical::new(black_box(&seq), black_box(5))
-                        .collect::<Vec<u64>>()
+                    black_box(
+                        cocktail::tokenizer::Canonical::new(black_box(seq), black_box(k))
+                            .collect::<Vec<u64>>(),
+                    )
                 })
             });
 
@@ -79,7 +81,10 @@ fn tokenize_canonical(c: &mut Criterion) {
                 &seq,
                 |b, seq| {
                     b.iter(|| {
-                        iter_cano::Lexi::new(black_box(&seq), black_box(5)).collect::<Vec<u64>>()
+                        black_box(
+                            iter_cano::Lexi::new(black_box(seq), black_box(k))
+                                .collect::<Vec<u64>>(),
+                        )
                     })
                 },
             );
