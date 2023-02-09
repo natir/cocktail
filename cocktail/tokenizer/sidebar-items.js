@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["basic",""],["canonical",""],["minimizer",""],["rle",""]]});
+window.SIDEBAR_ITEMS = {"mod":[["basic",""],["canonical",""],["minimizer",""],["rle",""]]};

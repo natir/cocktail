@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Tokenizer","An iterator that takes a DNA sequence and produces kmers, in the forward orientation and 2bit form."]]});
+window.SIDEBAR_ITEMS = {"struct":[["Tokenizer","An iterator that takes a DNA sequence and produces kmers, in the forward orientation and 2bit form."]]};

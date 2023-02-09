@@ -1,3 +1,4 @@
-var N = null;var sourcesIndex = {};
-sourcesIndex["cocktail"] = {"name":"","dirs":[{"name":"binding","files":["kmer.rs","mod.rs","tokenizer.rs"]},{"name":"kmer","files":["mod.rs"]},{"name":"tokenizer","files":["basic.rs","canonical.rs","minimizer.rs","mod.rs","rle.rs"]}],"files":["lib.rs","rle.rs"]};
+var sourcesIndex = JSON.parse('{\
+"cocktail":["",[["binding",[],["kmer.rs","mod.rs","tokenizer.rs"]],["kmer",[],["mod.rs"]],["tokenizer",[],["basic.rs","canonical.rs","minimizer.rs","mod.rs","rle.rs"]]],["lib.rs","rle.rs"]]\
+}');
 createSourceSidebar();

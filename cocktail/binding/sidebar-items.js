@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["kmer",""],["tokenizer",""]]});
+window.SIDEBAR_ITEMS = {"mod":[["kmer",""],["tokenizer",""]]};
