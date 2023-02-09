@@ -49,7 +49,7 @@ impl TokenizerRLE {
             kmer_mask: (1 << (k * 2)) - 1,
             seq: rle::seq2rle(seq),
             pos: (k - 1) as usize,
-            kmer: kmer::seq2bit(&seq[0..((k - 1) as usize)]),
+            kmer: kmer::seq2bit(unsafe { seq.get_unchecked(0..((k - 1) as usize)) }),
         }
     }
 }

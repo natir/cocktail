@@ -46,13 +46,13 @@ use rand::seq::SliceRandom;
 mod iter_cano;
 
 fn tokenize_canonical(c: &mut Criterion) {
-    for k in (5..19).step_by(2) {
+    for k in (11..19).step_by(2) {
         let mut g = c.benchmark_group(format!("canonical kmer iteration k={k}"));
 
         let mut rng = rand::thread_rng();
         let vals = [b'A', b'C', b'G', b'T'];
 
-        for i in 7..16 {
+        for i in 7..14 {
             let len = 1 << i;
 
             let seq = (0..len)

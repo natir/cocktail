@@ -49,7 +49,7 @@ impl<'a> Tokenizer<'a> {
             kmer_mask: (1 << (k * 2)) - 1,
             seq,
             pos: (k - 1) as usize,
-            kmer: kmer::seq2bit(&seq[0..((k - 1) as usize)]),
+            kmer: kmer::seq2bit(unsafe { seq.get_unchecked(0..((k - 1) as usize)) }),
         }
     }
 }
@@ -61,7 +61,10 @@ impl<'a> Iterator for Tokenizer<'a> {
         if self.pos == self.seq.len() {
             None
         } else {
-            self.kmer = ((self.kmer << 2) & self.kmer_mask) | kmer::nuc2bit(self.seq[self.pos]);
+            self.kmer = unsafe {
+                ((self.kmer << 2) & self.kmer_mask)
+                    | kmer::nuc2bit(*self.seq.get_unchecked(self.pos))
+            };
 
             self.pos += 1;
 
