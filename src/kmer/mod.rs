@@ -64,7 +64,7 @@ pub fn kmer2seq(mut kmer: u64, k: u8) -> String {
         kmer >>= 2;
     }
 
-    unsafe { String::from_utf8_unchecked((&buffer[..k as usize]).to_vec()) }
+    unsafe { String::from_utf8_unchecked(buffer[..k as usize].to_vec()) }
 }
 
 /// Convert the 2bit representation of a nucleotide in nucleotide

@@ -116,7 +116,7 @@ impl MinimizerRing {
         let max_len = (self.k - self.m + 1) as usize;
 
         for i in 0..max_len {
-            let rb_index = (max_len - i - 1) as usize;
+            let rb_index = max_len - i - 1;
 
             let mini = kmer::canonical(kmer & self.mask, self.m);
 

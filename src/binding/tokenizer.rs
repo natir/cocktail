@@ -37,7 +37,7 @@ pub unsafe extern "C" fn cocktail_minimizerring_free(miniring: *mut MinimizerRin
         return;
     }
 
-    Box::from_raw(miniring);
+    drop(Box::from_raw(miniring));
 }
 
 /// Reset the ring buffer. See [MinimizerRing::populate_buffer()]. In python it's populate_buffer methode of MinimizerRing
