@@ -51,7 +51,7 @@ Check [documentation](https://natir.github.io/cocktail/cocktail)
 
 ## Minimum supported Rust version
 
-Currently the minimum supported Rust version is 1.56.0.
+Currently the minimum supported Rust version is 1.74.
 
 ## Citation
 

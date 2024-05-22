@@ -3,7 +3,7 @@ name = "cocktail"
 version = "0.1.0"
 authors = ["Pierre Marijon <pmarijon@mpi-inf.mpg.de>"]
 edition = "2021"
-rust-version = "1.60"
+rust-version = "1.74"
 
 [lib]
 name = "cocktail"
@@ -12,8 +12,8 @@ crate-type = ["lib", "cdylib", "staticlib"]
 [dependencies]
 
 [dev-dependencies]
-rand      = "0.8"
-criterion = "0.5"
+rand      = { version = "0.8" }
+criterion = { version = "0.5" }
 
 [[bench]]
 name = "benches"

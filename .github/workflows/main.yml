@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
     branches: ["**"]
 
@@ -78,30 +78,24 @@ jobs:
       - name: Run tests for all feature combinations
         run: cargo test-all-features --no-fail-fast --all
 
+
   coverage:
     runs-on: ubuntu-latest
+    container:
+      image: xd009642/tarpaulin:develop-nightly
+      options: --security-opt seccomp=unconfined
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - uses: actions-rs/toolchain@v1
+      - name: Generate code coverage
+        run: cargo tarpaulin --engine llvm --timeout 120 --out xml
+
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v2
         with:
-          toolchain: nightly
-          override: true
-
-      - name: Install cargo-tarpaulin
-        uses: actions-rs/install@v0.1
-        with:
-          crate: cargo-tarpaulin
-          version: latest
-          use-tool-cache: true
-
-      - name: Run cargo-tarpaulin
-        run: cargo tarpaulin --all-features --timeout 600 --out Xml -- --test-threads 1
-
-      - name: Upload coverage to codecov
-        uses: codecov/codecov-action@v1.0.3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{secrets.CODECOV_TOKEN}} # not required for public repos
+          fail_ci_if_error: true
 
   lints:
     name: Lints
@@ -157,11 +151,11 @@ jobs:
 
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: 1.56.0
+          toolchain: 1.74
           override: true
 
       - name: check if Readme matches MSRV defined here
-        run: grep '1.56.0' Readme.md
+        run: grep '1.74' Readme.md
 
       - name: Run tests
         uses: actions-rs/cargo@v1
