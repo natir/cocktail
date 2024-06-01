@@ -1,25 +1,3 @@
-/*
-Copyright (c) 2020 Pierre Marijon <pmarijon@mpi-inf.mpg.de>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
-
 //! A set of function to convert DNA sequence in Run Length Encoding (RLE) and work with it.
 //! RLE is a small compression method where repetition of lettre are replace by the number of repetition and the lettre
 //!
@@ -34,6 +12,12 @@ SOFTWARE.
 //! - G or g -> 11
 //!
 //! The six heavyweight bits encode the number of repetition plus one
+
+/* standard use */
+
+/* crates use */
+
+/* project use */
 
 /// Convert a sequence in rle representation
 #[inline(always)]

@@ -121,14 +121,6 @@ mod test {
     fn basic() {
         let value = MiniBstr::new(SEQ, 10, 5).collect::<Vec<(&[u8], u64)>>();
 
-        for (kmer, mini) in &value {
-            println!(
-                "(b\"{}\", kmer::seq2bit(b\"{}\"))",
-                String::from_utf8(kmer.to_vec()).unwrap(),
-                kmer::kmer2seq(*mini, 5)
-            );
-        }
-
         let truth: Vec<(&[u8], u64)> = vec![
             (b"AACTAAACGC", kmer::seq2bit(b"AACTA")),
             (b"ACTAAACGCT", kmer::seq2bit(b"CGTTT")),
@@ -158,14 +150,6 @@ mod test {
     #[test]
     fn long() {
         let value = MiniBstr::new(SEQ_LONG, 10, 5).collect::<Vec<(&[u8], u64)>>();
-
-        for (kmer, mini) in &value {
-            println!(
-                "(b\"{}\", kmer::seq2bit(b\"{}\")),",
-                String::from_utf8(kmer.to_vec()).unwrap(),
-                kmer::kmer2seq(*mini, 5)
-            );
-        }
 
         let truth: Vec<(&[u8], u64)> = vec![
             (b"AGGATAGAAG", kmer::seq2bit(b"ATCCT")),

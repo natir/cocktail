@@ -3,6 +3,8 @@
 /* standard use */
 use std::ops::BitXor;
 
+/* crates use */
+
 /* local use */
 use crate::kmer;
 

@@ -1,25 +1,3 @@
-/*
-Copyright (c) 2019 Pierre Marijon <pmarijon@mpi-inf.mpg.de>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
-
 //! A set of function to convert small sequence (less than 32 nucleotide) in 2 bit representation.
 //! - A or a -> 00
 //! - C or c -> 01
@@ -34,6 +12,12 @@ SOFTWARE.
 //!
 //! This 2bit coding is inspired by https://cs.stackexchange.com/questions/82644/compact-mapping-from-an-involuted-set
 
+/* standard use */
+
+/* crates use */
+
+/* project use */
+
 /// Convert a sequence in 2 bit representation if suseq is larger than 32 only the last 32 nuc is store
 #[inline(always)]
 pub fn seq2bit(subseq: &[u8]) -> u64 {
@@ -47,15 +31,15 @@ pub fn seq2bit(subseq: &[u8]) -> u64 {
     kmer
 }
 
-/// Convert a nucleotide in 2bit representation, by use conversion present in [seq2bit](seq2bit)
+/// Convert a nucleotide in 2bit representation
 #[inline(always)]
 pub fn nuc2bit(nuc: u8) -> u64 {
     (nuc as u64 >> 1) & 0b11
 }
 
-/// Convert a 2 bit repersentation in String.
+/// Convert a 2 bit repersentation in String
 #[inline(always)]
-pub fn kmer2seq(mut kmer: u64, k: u8) -> String {
+pub fn kmer2seq(mut kmer: u64, k: u8) -> Vec<u8> {
     let mut buffer: [u8; 31] = [0; 31];
 
     for i in (0..k).rev() {
@@ -64,7 +48,7 @@ pub fn kmer2seq(mut kmer: u64, k: u8) -> String {
         kmer >>= 2;
     }
 
-    unsafe { String::from_utf8_unchecked(buffer[..k as usize].to_vec()) }
+    buffer[..k as usize].to_vec()
 }
 
 /// Convert the 2bit representation of a nucleotide in nucleotide
@@ -171,14 +155,14 @@ mod test {
     #[test]
     fn bit2seq_() {
         // 1000111101 -> TAGGC
-        assert_eq!(kmer2seq(0b1000111101, 5), "TAGGC");
+        assert_eq!(kmer2seq(0b1000111101, 5), b"TAGGC".to_vec());
 
         // 110101100 -> GCCTA
-        assert_eq!(kmer2seq(0b1101011000, 5), "GCCTA");
+        assert_eq!(kmer2seq(0b1101011000, 5), b"GCCTA".to_vec());
 
         assert_eq!(
             kmer2seq(0b1101011000, 31),
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAGCCTA"
+            b"AAAAAAAAAAAAAAAAAAAAAAAAAAGCCTA".to_vec()
         );
     }
 

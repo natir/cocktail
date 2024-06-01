@@ -1,3 +1,5 @@
+//! A cannonical tokenizer
+
 /* std use */
 
 /* crate use */

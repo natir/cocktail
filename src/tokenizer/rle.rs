@@ -1,27 +1,14 @@
-/*
-Copyright (c) 2020 Pierre Marijon <pmarijon@mpi-inf.mpg.de>
+//! An iterator than produce RLE kmer
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+/* standard use */
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+/* crates use */
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
+/* project use */
 
-/* local use */
-use crate::{kmer, rle};
+/* module declaration */
+use crate::kmer;
+use crate::rle;
 
 /// An iterator that takes a DNA sequence and produces kmers, in the forward orientation and 2bit form, homopolymer are compacted.
 ///
@@ -87,7 +74,7 @@ mod test {
         assert_eq!(
             vec![54, 457, 114, 397],
             TokenizerRLE::new(b"ACTGACTG", 5)
-                .map(|x| crate::kmer::remove_first_bit(crate::kmer::canonical(x, 5)))
+                .map(|x| kmer::remove_first_bit(kmer::canonical(x, 5)))
                 .collect::<Vec<u64>>()
         );
     }
@@ -97,7 +84,7 @@ mod test {
         assert_eq!(
             vec![108, 915, 228, 795],
             TokenizerRLE::new(b"ACTGACTG", 5)
-                .map(|x| crate::kmer::canonical(x, 5))
+                .map(|x| kmer::canonical(x, 5))
                 .collect::<Vec<u64>>()
         );
     }
