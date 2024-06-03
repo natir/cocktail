@@ -15,24 +15,24 @@ use crate::rle;
 /// # Example
 ///
 /// ```
-/// use cocktail::tokenizer::TokenizerRLE;
+/// use cocktail::tokenizer::rle::Forward;
 ///
-/// let tokenizer = TokenizerRLE::new(b"GTACTGTGCCCGTGTTACTTAGTAAGCGTGAAAGGTGCGTGTTTCCGAGA", 5);
+/// let tokenizer = Forward::new(b"GTACTGTGCCCGTGTTACTTAGTAAGCGTGAAAGGTGCGTGTTTCCGAGA", 5);
 ///
 /// for rle_kmer in tokenizer {
 ///     // ... do what you want ...
 /// }
-pub struct TokenizerRLE {
+pub struct Forward {
     kmer_mask: u64,
     seq: Box<[u8]>,
     pos: usize,
     kmer: u64,
 }
 
-impl TokenizerRLE {
+impl Forward {
     /// Create a new TokenizerRLE on seq DNA kmer size is equal to k
     pub fn new(seq: &[u8], k: u8) -> Self {
-        TokenizerRLE {
+        Forward {
             kmer_mask: (1 << (k * 2)) - 1,
             seq: rle::seq2rle(seq),
             pos: (k - 1) as usize,
@@ -41,7 +41,7 @@ impl TokenizerRLE {
     }
 }
 
-impl Iterator for TokenizerRLE {
+impl Iterator for Forward {
     type Item = u64;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -58,14 +58,14 @@ impl Iterator for TokenizerRLE {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]
     fn basic() {
         assert_eq!(
             vec![108, 433, 710, 795],
-            TokenizerRLE::new(b"ACTGACTG", 5).collect::<Vec<u64>>()
+            Forward::new(b"ACTGACTG", 5).collect::<Vec<u64>>()
         );
     }
 
@@ -73,7 +73,7 @@ mod test {
     fn hash() {
         assert_eq!(
             vec![54, 457, 114, 397],
-            TokenizerRLE::new(b"ACTGACTG", 5)
+            Forward::new(b"ACTGACTG", 5)
                 .map(|x| kmer::remove_first_bit(kmer::canonical(x, 5)))
                 .collect::<Vec<u64>>()
         );
@@ -83,7 +83,7 @@ mod test {
     fn canonical() {
         assert_eq!(
             vec![108, 915, 228, 795],
-            TokenizerRLE::new(b"ACTGACTG", 5)
+            Forward::new(b"ACTGACTG", 5)
                 .map(|x| kmer::canonical(x, 5))
                 .collect::<Vec<u64>>()
         );

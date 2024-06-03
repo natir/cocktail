@@ -140,7 +140,7 @@ pub fn get_hash_space_size(k: u8) -> u64 {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]

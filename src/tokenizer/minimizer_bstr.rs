@@ -112,7 +112,7 @@ impl<'a> Iterator for MiniBstr<'a> {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     const SEQ: &[u8] = b"AACTAAACGCTGTACGTACGAGCGATT";

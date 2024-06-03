@@ -97,7 +97,7 @@ pub fn rle2seq(rles: &[u8]) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]
