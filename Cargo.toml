@@ -7,7 +7,6 @@ rust-version = "1.74"
 
 [lib]
 name = "cocktail"
-crate-type = ["lib", "cdylib", "staticlib"]
 
 [dependencies]
 
