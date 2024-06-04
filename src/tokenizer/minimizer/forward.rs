@@ -16,23 +16,23 @@ use crate::tokenizer::minimizer::method;
 /// use cocktail::tokenizer::minimizer::Forward;
 /// use cocktail::tokenizer::minimizer::method;
 ///
-/// let tokenizer = Forward::<method::Random>::new(b"GTACTGTGCCCGTGTTACTTAGTAAGCGTGAAAGGTGCGTGTTTCCGAGA", 5, 3);
+/// let tokenizer = Forward::<method::Random, u64>::new(b"GTACTGTGCCCGTGTTACTTAGTAAGCGTGAAAGGTGCGTGTTTCCGAGA", 5, 3);
 ///
 /// for (kmer, minimizer) in tokenizer {
 ///     // ... do what you want ...
 /// }
-pub struct Forward<'a, M>
+pub struct Forward<'a, M, K>
 where
-    M: method::Method<u64>,
+    M: method::Method<K>,
 {
     kmer_mask: u64,
     seq: &'a [u8],
     pos: usize,
-    kmer: u64,
+    kmer: K,
     minimizer: M,
 }
 
-impl<'a, M> Forward<'a, M>
+impl<'a, M> Forward<'a, M, u64>
 where
     M: method::Method<u64>,
 {
@@ -53,7 +53,7 @@ where
     }
 }
 
-impl<'a, M> Iterator for Forward<'a, M>
+impl<'a, M> Iterator for Forward<'a, M, u64>
 where
     M: method::Method<u64>,
 {
@@ -74,15 +74,62 @@ where
     }
 }
 
+impl<'a, M> Forward<'a, M, Vec<u8>>
+where
+    M: method::Method<Vec<u8>>,
+{
+    /// Create a new Forward on seq DNA kmer size is equal to k, minimizer size is equal to m
+    pub fn new(seq: &'a [u8], k: u8, m: u8) -> Self {
+        let mut kmer = unsafe { seq.get_unchecked(0..(k as usize - 1)).to_vec() };
+        kmer.push(b'n');
+
+        let mut minimizer = M::default();
+        minimizer.init(k, m, kmer.clone());
+
+        kmer.rotate_right(1);
+
+        Self {
+            kmer_mask: (1 << (k * 2)) - 1,
+            seq,
+            pos: (k - 1) as usize,
+            kmer,
+            minimizer,
+        }
+    }
+}
+
+impl<'a, M> Iterator for Forward<'a, M, Vec<u8>>
+where
+    M: method::Method<Vec<u8>>,
+{
+    type Item = (Vec<u8>, u64);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.pos == self.seq.len() {
+            None
+        } else {
+            self.kmer.rotate_left(1);
+            let end = self.kmer.len() - 1;
+            unsafe { *self.kmer.get_unchecked_mut(end) = self.seq[self.pos] }
+
+            self.minimizer.add_kmer(self.kmer.clone());
+
+            self.pos += 1;
+
+            Some((self.kmer.clone(), self.minimizer.get_mini().0))
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn basic() {
+    fn u64() {
         let seq = b"acgtgcgtgagaattgttcggtggaacaggcg";
 
-        let token = Forward::<method::Random>::new(seq, 11, 7);
+        let token = Forward::<method::Random, u64>::new(seq, 11, 7);
 
         let mut kmers = Vec::new();
         let mut canos = Vec::new();
@@ -124,15 +171,66 @@ mod tests {
     }
 
     #[test]
+    fn bytevec() {
+        let seq = b"acgtgcgtgagaattgttcggtggaacaggcg";
+
+        let token = Forward::<method::Random, Vec<u8>>::new(seq, 11, 7);
+
+        let mut kmers = Vec::new();
+        let mut minis = Vec::new();
+
+        for (kmer, mini) in token {
+            kmers.push(kmer);
+            minis.push(mini);
+        }
+
+        assert_eq!(
+            kmers,
+            [
+                b"acgtgcgtgag".to_vec(),
+                b"cgtgcgtgaga".to_vec(),
+                b"gtgcgtgagaa".to_vec(),
+                b"tgcgtgagaat".to_vec(),
+                b"gcgtgagaatt".to_vec(),
+                b"cgtgagaattg".to_vec(),
+                b"gtgagaattgt".to_vec(),
+                b"tgagaattgtt".to_vec(),
+                b"gagaattgttc".to_vec(),
+                b"agaattgttcg".to_vec(),
+                b"gaattgttcgg".to_vec(),
+                b"aattgttcggt".to_vec(),
+                b"attgttcggtg".to_vec(),
+                b"ttgttcggtgg".to_vec(),
+                b"tgttcggtgga".to_vec(),
+                b"gttcggtggaa".to_vec(),
+                b"ttcggtggaac".to_vec(),
+                b"tcggtggaaca".to_vec(),
+                b"cggtggaacag".to_vec(),
+                b"ggtggaacagg".to_vec(),
+                b"gtggaacaggc".to_vec(),
+                b"tggaacaggcg".to_vec(),
+            ]
+        );
+
+        assert_eq!(
+            minis,
+            [
+                4561, 4561, 4561, 10641, 13066, 13066, 13066, 698, 698, 698, 698, 698, 7184, 5212,
+                5212, 5212, 5212, 5212, 10565, 10565, 5865, 1271
+            ]
+        );
+    }
+
+    #[test]
     fn same_in_each_strand() {
         let fwd = b"CACTCCTGTCACATCATAATCGTTTGCTATT";
         let rev = b"AATAGCAAACGATTATGATGTGACAGGAGTG";
 
-        let fwd_token = Forward::<method::Random>::new(fwd, 11, 7);
+        let fwd_token = Forward::<method::Random, u64>::new(fwd, 11, 7);
         let mut fwd_canos = Vec::new();
         let mut fwd_minis = Vec::new();
 
-        let rev_token = Forward::<method::Random>::new(rev, 11, 7);
+        let rev_token = Forward::<method::Random, u64>::new(rev, 11, 7);
         let mut rev_canos = Vec::new();
         let mut rev_minis = Vec::new();
 
