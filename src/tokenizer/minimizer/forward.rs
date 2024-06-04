@@ -123,13 +123,24 @@ where
 
 #[cfg(test)]
 mod tests {
+    /* crate use */
+    use biotest::Format as _;
+
+    /* project use */
     use super::*;
+    use crate::bytevec;
 
     #[test]
     fn u64() {
-        let seq = b"acgtgcgtgagaattgttcggtggaacaggcg";
+        let mut rng = biotest::rand();
+        let generator = biotest::Sequence::builder()
+            .sequence_len(50)
+            .build()
+            .unwrap();
+        let mut seq = vec![];
+        generator.record(&mut seq, &mut rng).unwrap();
 
-        let token = Forward::<method::Random, u64>::new(seq, 11, 7);
+        let token = Forward::<method::Random, u64>::new(&seq, 11, 7);
 
         let mut kmers = Vec::new();
         let mut canos = Vec::new();
@@ -146,35 +157,47 @@ mod tests {
         assert_eq!(
             kmers,
             [
-                505779, 2023116, 3898160, 3009730, 3650314, 2018347, 3879086, 2933434, 3345129,
-                797607, 3190431, 178814, 715259, 2861039, 3055548, 3833584, 2751425, 2617092,
-                2079763, 4124751, 3916093, 3081463
+                2239527, 569501, 2278007, 723422, 2893691, 3186158, 161722, 646888, 2587555,
+                1961614, 3652154, 2025704, 3908512, 3051139, 3815949, 2680885, 2334932, 951121,
+                3804487, 2635039, 2151550, 217592, 870368, 3481474, 1342987, 1177645, 516278,
+                2065114, 4066155, 3681710, 2143928, 187105, 748423, 2993693, 3586164, 1761747,
+                2852687, 3022140, 3699954, 2216904
             ]
         );
 
         assert_eq!(
             canos,
             [
-                505779, 2023116, 2724305, 3009730, 3650314, 2018347, 3879086, 68196, 3162777,
-                1839270, 1508393, 178814, 715259, 2861039, 2430724, 3833584, 3821936, 2617092,
-                1811735, 4124751, 3521105, 1928852
+                1877128, 3615010, 1952328, 488082, 1170596, 292649, 161722, 646888, 2587555,
+                1961614, 3652154, 2025704, 2627601, 1705476, 3572097, 2680885, 3106840, 3922438,
+                2029185, 1555872, 388968, 217592, 870368, 661437, 1213935, 3449211, 862302,
+                2065114, 1102469, 3681710, 2143928, 187105, 748423, 3638324, 3586164, 1761747,
+                1498640, 3022140, 3699954, 2216904
             ]
         );
 
         assert_eq!(
             minis,
             [
-                4561, 4561, 4561, 10641, 13066, 13066, 13066, 698, 698, 698, 698, 698, 7184, 5212,
-                5212, 5212, 5212, 5212, 10565, 10565, 5865, 1271
+                7332, 7332, 7332, 7332, 7332, 10107, 10107, 10107, 10107, 7912, 14906, 14906,
+                14906, 14906, 14906, 3715, 3715, 3715, 7926, 7926, 7926, 7926, 7926, 8571, 8571,
+                8571, 2583, 730, 730, 730, 730, 730, 1076, 11805, 11805, 11805, 11805, 11805,
+                13554, 13554
             ]
         );
     }
 
     #[test]
     fn bytevec() {
-        let seq = b"acgtgcgtgagaattgttcggtggaacaggcg";
+        let mut rng = biotest::rand();
+        let generator = biotest::Sequence::builder()
+            .sequence_len(50)
+            .build()
+            .unwrap();
+        let mut seq = vec![];
+        generator.record(&mut seq, &mut rng).unwrap();
 
-        let token = Forward::<method::Random, Vec<u8>>::new(seq, 11, 7);
+        let token = Forward::<method::Random, Vec<u8>>::new(&seq, 11, 7);
 
         let mut kmers = Vec::new();
         let mut minis = Vec::new();
@@ -187,50 +210,76 @@ mod tests {
         assert_eq!(
             kmers,
             [
-                b"acgtgcgtgag".to_vec(),
-                b"cgtgcgtgaga".to_vec(),
-                b"gtgcgtgagaa".to_vec(),
-                b"tgcgtgagaat".to_vec(),
-                b"gcgtgagaatt".to_vec(),
-                b"cgtgagaattg".to_vec(),
-                b"gtgagaattgt".to_vec(),
-                b"tgagaattgtt".to_vec(),
-                b"gagaattgttc".to_vec(),
-                b"agaattgttcg".to_vec(),
-                b"gaattgttcgg".to_vec(),
-                b"aattgttcggt".to_vec(),
-                b"attgttcggtg".to_vec(),
-                b"ttgttcggtgg".to_vec(),
-                b"tgttcggtgga".to_vec(),
-                b"gttcggtggaa".to_vec(),
-                b"ttcggtggaac".to_vec(),
-                b"tcggtggaaca".to_vec(),
-                b"cggtggaacag".to_vec(),
-                b"ggtggaacagg".to_vec(),
-                b"gtggaacaggc".to_vec(),
-                b"tggaacaggcg".to_vec(),
+                b"taTATgAAtCG".to_vec(),
+                b"aTATgAAtCGC".to_vec(),
+                b"TATgAAtCGCg".to_vec(),
+                b"ATgAAtCGCgt".to_vec(),
+                b"TgAAtCGCgtG".to_vec(),
+                b"gAAtCGCgtGT".to_vec(),
+                b"AAtCGCgtGTT".to_vec(),
+                b"AtCGCgtGTTA".to_vec(),
+                b"tCGCgtGTTAG".to_vec(),
+                b"CGCgtGTTAGT".to_vec(),
+                b"GCgtGTTAGTT".to_vec(),
+                b"CgtGTTAGTTA".to_vec(),
+                b"gtGTTAGTTAa".to_vec(),
+                b"tGTTAGTTAag".to_vec(),
+                b"GTTAGTTAagc".to_vec(),
+                b"TTAGTTAagcc".to_vec(),
+                b"TAGTTAagccA".to_vec(),
+                b"AGTTAagccAc".to_vec(),
+                b"GTTAagccAcg".to_vec(),
+                b"TTAagccAcgg".to_vec(),
+                b"TAagccAcggt".to_vec(),
+                b"AagccAcggtA".to_vec(),
+                b"agccAcggtAa".to_vec(),
+                b"gccAcggtAat".to_vec(),
+                b"ccAcggtAatG".to_vec(),
+                b"cAcggtAatGc".to_vec(),
+                b"AcggtAatGcT".to_vec(),
+                b"cggtAatGcTt".to_vec(),
+                b"ggtAatGcTtg".to_vec(),
+                b"gtAatGcTtgt".to_vec(),
+                b"tAatGcTtgta".to_vec(),
+                b"AatGcTtgtaC".to_vec(),
+                b"atGcTtgtaCg".to_vec(),
+                b"tGcTtgtaCgc".to_vec(),
+                b"GcTtgtaCgcA".to_vec(),
+                b"cTtgtaCgcAG".to_vec(),
+                b"TtgtaCgcAGg".to_vec(),
+                b"tgtaCgcAGgA".to_vec(),
+                b"gtaCgcAGgAt".to_vec(),
+                b"taCgcAGgAta".to_vec(),
             ]
         );
 
         assert_eq!(
             minis,
             [
-                4561, 4561, 4561, 10641, 13066, 13066, 13066, 698, 698, 698, 698, 698, 7184, 5212,
-                5212, 5212, 5212, 5212, 10565, 10565, 5865, 1271
+                7332, 7332, 7332, 7332, 7332, 10107, 10107, 10107, 10107, 7912, 14906, 14906,
+                14906, 14906, 14906, 3715, 3715, 3715, 7926, 7926, 7926, 7926, 7926, 8571, 8571,
+                8571, 2583, 730, 730, 730, 730, 730, 1076, 11805, 11805, 11805, 11805, 11805,
+                13554, 13554
             ]
         );
     }
 
     #[test]
     fn same_in_each_strand() {
-        let fwd = b"CACTCCTGTCACATCATAATCGTTTGCTATT";
-        let rev = b"AATAGCAAACGATTATGATGTGACAGGAGTG";
+        let mut rng = biotest::rand();
+        let generator = biotest::Sequence::builder()
+            .sequence_len(30)
+            .build()
+            .unwrap();
+        let mut fwd = vec![];
+        generator.record(&mut fwd, &mut rng).unwrap();
+        let rev = bytevec::revcomp(&fwd);
 
-        let fwd_token = Forward::<method::Random, u64>::new(fwd, 11, 7);
+        let fwd_token = Forward::<method::Random, u64>::new(&fwd, 11, 7);
         let mut fwd_canos = Vec::new();
         let mut fwd_minis = Vec::new();
 
-        let rev_token = Forward::<method::Random, u64>::new(rev, 11, 7);
+        let rev_token = Forward::<method::Random, u64>::new(&rev, 11, 7);
         let mut rev_canos = Vec::new();
         let mut rev_minis = Vec::new();
 

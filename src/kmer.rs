@@ -177,8 +177,8 @@ mod tests {
 
     #[test]
     fn parity_even_() {
-        assert_eq!(parity_even(0b1111), true);
-        assert_eq!(parity_even(0b1110), false);
+        assert!(parity_even(0b1111));
+        assert!(!parity_even(0b1110));
     }
 
     #[test]

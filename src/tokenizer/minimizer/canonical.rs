@@ -160,7 +160,7 @@ mod tests {
     /* std use */
 
     /* 3rd party use */
-    use biotest::values::Generate;
+    use biotest::Format;
 
     /* local use */
     use super::*;
@@ -168,9 +168,12 @@ mod tests {
     #[test]
     fn u64() {
         let mut rng = biotest::rand();
-        let seq = biotest::values::Nucleotides::Dna
-            .generate(&mut rng, 50)
+        let generator = biotest::Sequence::builder()
+            .sequence_len(50)
+            .build()
             .unwrap();
+        let mut seq = vec![];
+        generator.record(&mut seq, &mut rng).unwrap();
 
         let token = Canonical::<method::Random, u64>::new(&seq, 11, 7);
 
@@ -183,9 +186,6 @@ mod tests {
             minis.push(kmer::kmer2seq(mini, 7));
         }
 
-        println!("{}", String::from_utf8(seq).unwrap());
-        // taTATgAAtCGCgtGTTAGTTAagccAcggtAatGcTtgtaCgcAGgAta
-        // ATATACTTAGC
         assert_eq!(
             kmers,
             vec![
@@ -282,9 +282,13 @@ mod tests {
     #[test]
     fn bytevec() {
         let mut rng = biotest::rand();
-        let seq = biotest::values::Nucleotides::DnaUpper
-            .generate(&mut rng, 50)
+        let generator = biotest::Sequence::builder()
+            .sequence_len(50)
+            .build()
             .unwrap();
+        let mut seq = vec![];
+
+        generator.record(&mut seq, &mut rng).unwrap();
 
         let token = Canonical::<method::Random, Vec<u8>>::new(&seq, 11, 7);
 
@@ -295,97 +299,97 @@ mod tests {
             kmers.push(kmer);
             minis.push(kmer::kmer2seq(mini, 7));
         }
-        println!("{}", String::from_utf8(seq).unwrap());
-        //GGTCTACACAAGGCCGACCAGTAGAGAAGTGCCGCAGTCAACTAGTCGGT
+
+        // taTATgAAtCGCgtGTTAGTTAagccAcggtAatGcTtgtaCgcAGgAta
         assert_eq!(
             kmers,
             vec![
-                b"GGTCTACACAA".to_vec(),
-                b"CTTGTGTAGAC".to_vec(),
-                b"CCTTGTGTAGA".to_vec(),
-                b"CTACACAAGGC".to_vec(),
-                b"GGCCTTGTGTA".to_vec(),
-                b"ACACAAGGCCG".to_vec(),
-                b"CACAAGGCCGA".to_vec(),
-                b"ACAAGGCCGAC".to_vec(),
-                b"CAAGGCCGACC".to_vec(),
-                b"AAGGCCGACCA".to_vec(),
-                b"AGGCCGACCAG".to_vec(),
-                b"ACTGGTCGGCC".to_vec(),
-                b"GCCGACCAGTA".to_vec(),
-                b"CCGACCAGTAG".to_vec(),
-                b"CGACCAGTAGA".to_vec(),
-                b"CTCTACTGGTC".to_vec(),
-                b"ACCAGTAGAGA".to_vec(),
-                b"CCAGTAGAGAA".to_vec(),
-                b"CAGTAGAGAAG".to_vec(),
-                b"ACTTCTCTACT".to_vec(),
-                b"CACTTCTCTAC".to_vec(),
-                b"GCACTTCTCTA".to_vec(),
-                b"AGAGAAGTGCC".to_vec(),
-                b"CGGCACTTCTC".to_vec(),
-                b"AGAAGTGCCGC".to_vec(),
-                b"GAAGTGCCGCA".to_vec(),
-                b"AAGTGCCGCAG".to_vec(),
-                b"ACTGCGGCACT".to_vec(),
-                b"GACTGCGGCAC".to_vec(),
-                b"TGACTGCGGCA".to_vec(),
-                b"GCCGCAGTCAA".to_vec(),
-                b"CCGCAGTCAAC".to_vec(),
-                b"AGTTGACTGCG".to_vec(),
-                b"GCAGTCAACTA".to_vec(),
-                b"CAGTCAACTAG".to_vec(),
-                b"ACTAGTTGACT".to_vec(),
-                b"GACTAGTTGAC".to_vec(),
-                b"CGACTAGTTGA".to_vec(),
-                b"CAACTAGTCGG".to_vec(),
-                b"AACTAGTCGGT".to_vec(),
+                b"CGaTTcATAta".to_vec(),
+                b"GCGaTTcATAt".to_vec(),
+                b"TATgAAtCGCg".to_vec(),
+                b"ATgAAtCGCgt".to_vec(),
+                b"CacGCGaTTcA".to_vec(),
+                b"ACacGCGaTTc".to_vec(),
+                b"AACacGCGaTT".to_vec(),
+                b"AtCGCgtGTTA".to_vec(),
+                b"CTAACacGCGa".to_vec(),
+                b"ACTAACacGCG".to_vec(),
+                b"AACTAACacGC".to_vec(),
+                b"CgtGTTAGTTA".to_vec(),
+                b"gtGTTAGTTAa".to_vec(),
+                b"ctTAACTAACa".to_vec(),
+                b"GTTAGTTAagc".to_vec(),
+                b"TTAGTTAagcc".to_vec(),
+                b"TAGTTAagccA".to_vec(),
+                b"AGTTAagccAc".to_vec(),
+                b"GTTAagccAcg".to_vec(),
+                b"TTAagccAcgg".to_vec(),
+                b"TAagccAcggt".to_vec(),
+                b"AagccAcggtA".to_vec(),
+                b"agccAcggtAa".to_vec(),
+                b"atTaccgTggc".to_vec(),
+                b"CatTaccgTgg".to_vec(),
+                b"cAcggtAatGc".to_vec(),
+                b"AcggtAatGcT".to_vec(),
+                b"aAgCatTaccg".to_vec(),
+                b"caAgCatTacc".to_vec(),
+                b"acaAgCatTac".to_vec(),
+                b"tAatGcTtgta".to_vec(),
+                b"AatGcTtgtaC".to_vec(),
+                b"atGcTtgtaCg".to_vec(),
+                b"gcGtacaAgCa".to_vec(),
+                b"GcTtgtaCgcA".to_vec(),
+                b"CTgcGtacaAg".to_vec(),
+                b"TtgtaCgcAGg".to_vec(),
+                b"TcCTgcGtaca".to_vec(),
+                b"aTcCTgcGtac".to_vec(),
+                b"taCgcAGgAta".to_vec(),
             ]
         );
 
         assert_eq!(
             minis,
             vec![
-                b"GTGTAGA".to_vec(),
-                b"GTGTAGA".to_vec(),
-                b"GTGTAGA".to_vec(),
-                b"TTGTGTA".to_vec(),
-                b"TTGTGTA".to_vec(),
-                b"ACACAAG".to_vec(),
-                b"AAGGCCG".to_vec(),
-                b"AAGGCCG".to_vec(),
-                b"GCCGACC".to_vec(),
-                b"CCGACCA".to_vec(),
-                b"CCGACCA".to_vec(),
-                b"CCGACCA".to_vec(),
-                b"CCGACCA".to_vec(),
-                b"CCGACCA".to_vec(),
-                b"CTACTGG".to_vec(),
-                b"CTACTGG".to_vec(),
-                b"CTACTGG".to_vec(),
-                b"CTACTGG".to_vec(),
-                b"CAGTAGA".to_vec(),
-                b"CTCTACT".to_vec(),
-                b"CACTTCT".to_vec(),
-                b"CACTTCT".to_vec(),
-                b"CACTTCT".to_vec(),
-                b"CACTTCT".to_vec(),
-                b"CACTTCT".to_vec(),
-                b"TGCCGCA".to_vec(),
-                b"CTGCGGC".to_vec(),
-                b"CTGCGGC".to_vec(),
-                b"CTGCGGC".to_vec(),
-                b"CTGCGGC".to_vec(),
-                b"TTGACTG".to_vec(),
-                b"TTGACTG".to_vec(),
-                b"TTGACTG".to_vec(),
-                b"TTGACTG".to_vec(),
-                b"TTGACTG".to_vec(),
-                b"TCAACTA".to_vec(),
-                b"ACTAGTC".to_vec(),
-                b"ACTAGTC".to_vec(),
-                b"ACTAGTC".to_vec(),
-                b"ACTAGTC".to_vec(),
+                b"CGATTCA".to_vec(),
+                b"CGATTCA".to_vec(),
+                b"CGATTCA".to_vec(),
+                b"CGATTCA".to_vec(),
+                b"CGATTCA".to_vec(),
+                b"TCGCGTG".to_vec(),
+                b"TCGCGTG".to_vec(),
+                b"TCGCGTG".to_vec(),
+                b"TCGCGTG".to_vec(),
+                b"CGTGTTA".to_vec(),
+                b"GTTAGTT".to_vec(),
+                b"GTTAGTT".to_vec(),
+                b"GTTAGTT".to_vec(),
+                b"GTTAGTT".to_vec(),
+                b"GTTAGTT".to_vec(),
+                b"AGTTAAG".to_vec(),
+                b"AGTTAAG".to_vec(),
+                b"AGTTAAG".to_vec(),
+                b"CGTGGCT".to_vec(),
+                b"CGTGGCT".to_vec(),
+                b"CGTGGCT".to_vec(),
+                b"CGTGGCT".to_vec(),
+                b"CGTGGCT".to_vec(),
+                b"TACCGTG".to_vec(),
+                b"TACCGTG".to_vec(),
+                b"TACCGTG".to_vec(),
+                b"ATTACCG".to_vec(),
+                b"AATGCTT".to_vec(),
+                b"AATGCTT".to_vec(),
+                b"AATGCTT".to_vec(),
+                b"AATGCTT".to_vec(),
+                b"AATGCTT".to_vec(),
+                b"ACAAGCA".to_vec(),
+                b"TGTACGC".to_vec(),
+                b"TGTACGC".to_vec(),
+                b"TGTACGC".to_vec(),
+                b"TGTACGC".to_vec(),
+                b"TGTACGC".to_vec(),
+                b"GCAGGAT".to_vec(),
+                b"GCAGGAT".to_vec(),
             ]
         );
     }
