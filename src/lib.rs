@@ -7,6 +7,7 @@
 /* project use */
 
 /* module declaration */
+pub mod bytevec;
 pub mod kmer;
 pub mod rle;
 pub mod tokenizer;
