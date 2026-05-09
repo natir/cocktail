@@ -7,7 +7,7 @@ pub struct Lexi<'a> {
     pos: usize,
     forward: u64,
     reverse: u64,
-    forward_cano: bool,
+    _forward_cano: bool,
 }
 
 impl<'a> Lexi<'a> {
@@ -21,7 +21,7 @@ impl<'a> Lexi<'a> {
             pos: (k - 1) as usize,
             forward,
             reverse: kmer::revcomp(forward, k),
-            forward_cano: kmer::parity_even(forward),
+            _forward_cano: kmer::parity_even(forward),
         }
     }
 }

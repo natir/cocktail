@@ -27,7 +27,7 @@ pub struct Random {
 impl Random {
     fn update_minimizer(&mut self) {
         let mut index: usize = 0;
-        let mut min = u64::max_value();
+        let mut min = u64::MAX;
 
         for (i, elt) in self.ring_buffer.iter().enumerate() {
             if elt.1 < min {
@@ -57,7 +57,7 @@ impl method::Method<u64> for Random {
         self.m = m;
 
         // Populate buffer
-        let mut score = u64::max_value();
+        let mut score = u64::MAX;
         let max_len = (self.k - self.m + 1) as usize;
 
         for i in 0..max_len {
@@ -113,7 +113,7 @@ impl method::Method<Vec<u8>> for Random {
         self.m = m;
 
         // Populate buffer
-        let mut score = u64::max_value();
+        let mut score = u64::MAX;
         let max_len = (self.k - self.m + 1) as usize;
 
         for i in 0..max_len - 1 {

@@ -1,8 +1,11 @@
+/* crates use */
+
+use rand::prelude::IndexedRandom as _;
+
 /* project use */
-use cocktail;
 
 /* criterion use */
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 
 mod kmer2seq;
 
@@ -24,24 +27,24 @@ fn kmer2seq(c: &mut Criterion) {
 
     for k in (1..32).step_by(2) {
         g.bench_with_input(BenchmarkId::new("actual implementation", k), &k, |b, &k| {
-            b.iter(|| black_box(cocktail::kmer::kmer2seq(black_box(7271), k)))
+            b.iter(|| std::hint::black_box(cocktail::kmer::kmer2seq(std::hint::black_box(7271), k)))
         });
 
         g.bench_with_input(BenchmarkId::new("static buffer", k), &k, |b, &k| {
-            b.iter(|| black_box(kmer2seq::static_buffer(black_box(7271), k)))
+            b.iter(|| std::hint::black_box(kmer2seq::static_buffer(std::hint::black_box(7271), k)))
         });
 
         g.bench_with_input(BenchmarkId::new("local buffer", k), &k, |b, &k| {
-            b.iter(|| black_box(kmer2seq::local_buffer(black_box(7271), k)))
+            b.iter(|| std::hint::black_box(kmer2seq::local_buffer(std::hint::black_box(7271), k)))
         });
 
         g.bench_with_input(BenchmarkId::new("dynamic local buffer", k), &k, |b, &k| {
-            b.iter(|| black_box(kmer2seq::dyn_local_buffer(black_box(7271), k)))
+            b.iter(|| {
+                std::hint::black_box(kmer2seq::dyn_local_buffer(std::hint::black_box(7271), k))
+            })
         });
     }
 }
-
-use rand::seq::SliceRandom;
 
 mod iter_cano;
 
@@ -49,7 +52,7 @@ fn tokenize_canonical(c: &mut Criterion) {
     for k in (11..19).step_by(2) {
         let mut g = c.benchmark_group(format!("canonical kmer iteration k={k}"));
 
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let vals = [b'A', b'C', b'G', b'T'];
 
         for i in 7..14 {
@@ -60,18 +63,24 @@ fn tokenize_canonical(c: &mut Criterion) {
                 .collect::<Vec<u8>>();
 
             g.bench_with_input(BenchmarkId::new("only forward", len), &seq, |b, seq| {
-                black_box(b.iter(|| {
-                    cocktail::tokenizer::Tokenizer::new(black_box(seq), black_box(k))
-                        .map(|x| cocktail::kmer::canonical(x, k))
-                        .collect::<Vec<u64>>()
+                std::hint::black_box(b.iter(|| {
+                    cocktail::tokenizer::basic::Tokenizer::new(
+                        std::hint::black_box(seq),
+                        std::hint::black_box(k),
+                    )
+                    .map(|x| cocktail::kmer::canonical(x, k))
+                    .collect::<Vec<u64>>()
                 }))
             });
 
             g.bench_with_input(BenchmarkId::new("forward reverse", len), &seq, |b, seq| {
                 b.iter(|| {
-                    black_box(
-                        cocktail::tokenizer::Canonical::new(black_box(seq), black_box(k))
-                            .collect::<Vec<u64>>(),
+                    std::hint::black_box(
+                        cocktail::tokenizer::kmer::Canonical::new(
+                            std::hint::black_box(seq),
+                            std::hint::black_box(k),
+                        )
+                        .collect::<Vec<u64>>(),
                     )
                 })
             });
@@ -81,9 +90,12 @@ fn tokenize_canonical(c: &mut Criterion) {
                 &seq,
                 |b, seq| {
                     b.iter(|| {
-                        black_box(
-                            iter_cano::Lexi::new(black_box(seq), black_box(k))
-                                .collect::<Vec<u64>>(),
+                        std::hint::black_box(
+                            iter_cano::Lexi::new(
+                                std::hint::black_box(seq),
+                                std::hint::black_box(k),
+                            )
+                            .collect::<Vec<u64>>(),
                         )
                     })
                 },

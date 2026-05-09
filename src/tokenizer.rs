@@ -7,6 +7,7 @@
 /* project use */
 
 /* module declaration */
+pub mod basic;
 pub mod kmer;
 pub mod minimizer;
 pub mod rle;
